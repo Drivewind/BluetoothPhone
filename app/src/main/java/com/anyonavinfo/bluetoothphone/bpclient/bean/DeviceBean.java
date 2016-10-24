@@ -9,7 +9,7 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
 public class DeviceBean {
     private String deviceName;
     private String deviceAddr;
-    private int deviceState;//0未连接 1已连接 2正在连接
+    private int deviceState;//0未连接 1已连接 2连接中
     public DeviceBean(PhoneDevice device){
         deviceName = device.getBdname();
         deviceAddr = device.getBdaddr();
