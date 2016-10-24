@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="80px"
         android:layout_marginLeft="20px"
         android:layout_marginTop="20px"
         android:orientation="horizontal"
-        >
+        android:background="@drawable/itemonclick">
 
         <ImageView
             android:id="@+id/pic_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
             android:src="@drawable/phone" />
 
         <TextView
@@ -26,6 +26,7 @@
             android:ellipsize="end"
             android:enabled="false"
             android:singleLine="true"
+            android:layout_marginTop="20px"
             android:text="HTC OneX"
             android:textColor="#f4f4f4"
             android:textSize="28px" />
@@ -35,7 +36,8 @@
             android:layout_width="100px"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5px"
-            android:text="已连接"
+            android:layout_marginTop="20px"
+            android:text="未连接"
             android:textColor="#f4f4f4"
             android:textSize="28px" />
 
@@ -43,6 +45,7 @@
             android:id="@+id/delete"
             android:layout_width="30px"
             android:layout_height="30px"
+            android:layout_marginTop="20px"
             android:layout_marginLeft="30px"
             android:background="@drawable/delete" />
     </LinearLayout>
