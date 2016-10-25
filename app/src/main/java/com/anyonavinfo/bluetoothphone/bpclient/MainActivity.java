@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -15,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -42,6 +44,8 @@ import com.anyonavinfo.bluetoothphone.bpclient.fragment.LinkmanFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.RecordFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.SetFragment;
 import com.anyonavinfo.bluetoothphone.bpservice.utils.TimeUtils;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends BaseFragmentActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -73,9 +77,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     public BluetoothPhoneService phoneService;
 
-    public ProgressDialog progressDialog;
-    public AlertDialog.Builder builder;
-    public AlertDialog dialog;
+    /* public ProgressDialog progressDialog;
+     public AlertDialog.Builder builder;
+     public AlertDialog dialog;*/
+    public SweetAlertDialog sweetAlertDialog;
 
 
     @Override
@@ -101,11 +106,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         if (intent.getAction().equals("PHONE_INCOMING")) {
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
-            if (dialog != null) {
-                dialog.dismiss();
+            if (sweetAlertDialog != null) {
+                sweetAlertDialog.cancel();
             }
-
-            onDiss();
         }
     }
 
@@ -545,10 +548,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.PHONEBOOK_DOWNLOAD_DONE:
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
-                onDiss();
-                Toast toast = Toast.makeText(this, "通讯录同步已完成", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                sweetAlertDialog.cancel();
+                sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE);
+                sweetAlertDialog.setTitleText("同步完成!");
+                sweetAlertDialog.show();
                 break;
             case CommonData.PHONECALL:
                 recordFragment.updatePhoneCallView(phoneService.getPhoneCallList(0));
@@ -562,10 +565,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 call_mute.setChecked(true);
                 break;
             case CommonData.PHONEOPERATOR_SUCCESSED:
-                if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 35) {
-                    connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());
+                if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 5) {
+                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace()))
+                        connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());
                 } else if (CommonData.hfpStatu == 4) {
-                    callerIDsFragment.caller_dist.setText(CommonData.talkingContact.getPbplace());
+                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace()))
+                        callerIDsFragment.caller_dist.setText(CommonData.talkingContact.getPbplace());
                 }
                 recordFragment.updatePhoneCallView(phoneService.getPhoneCallList(0));
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
@@ -617,18 +622,21 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     public void onShow() {
-        progressDialog = ProgressDialog.show(this, "通讯录同步中...",
-                "请稍后...", true, true);
+        sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        sweetAlertDialog.setTitleText("Loading");
+        sweetAlertDialog.setCancelable(false);
+        sweetAlertDialog.show();
     }
 
     public void onDiss() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
+        if (sweetAlertDialog != null) {
+            sweetAlertDialog.cancel();
         }
     }
 
     public void showProgressDialog() {
-        builder = new AlertDialog.Builder(this);
+       /* builder = new AlertDialog.Builder(this);
         builder.setTitle("蓝牙电话申请访问您的通讯录");    //设置对话框标题
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
@@ -644,7 +652,29 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         builder.setCancelable(true);
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
+        dialog.show();*/
+        sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+        sweetAlertDialog.setTitleText("蓝牙电话请求访问您的通讯录！");
+        sweetAlertDialog.setCancelText("拒绝");
+        sweetAlertDialog.setConfirmText("同意");
+        sweetAlertDialog.showCancelButton(true);
+        sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                // reuse previous dialog instance, keep widget user state, reset them if you need
+                sDialog.cancel();
+
+            }
+        });
+        sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                phoneService.phoneBookStartUpdate();
+                sDialog.cancel();
+            }
+        });
+        sweetAlertDialog.show();
+
     }
 
 }

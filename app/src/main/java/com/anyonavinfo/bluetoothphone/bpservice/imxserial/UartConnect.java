@@ -197,16 +197,16 @@ public class UartConnect {
         public void run() {
             super.run();
             while (!isInterrupted()) {
-                final ComBean ComData;
-                while ((ComData = QueueList.poll()) != null) {
+                final ComBean ComData = QueueList.poll();
+                if (ComData != null) {
                     UartRcv(ComData.bRec.length, ComData.bRec);
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "Received Thread Is Interrupted !!!");
-                    }
-                    break;
                 }
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Received Thread Is Interrupted !!!");
+                }
+
             }
         }
 

@@ -1,15 +1,12 @@
 package com.anyonavinfo.bluetoothphone.bpclient.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,19 +14,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.R;
+import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.adapter.SortAdapter;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.MyPhoneBook;
-import com.anyonavinfo.bluetoothphone.bpclient.bean.SortModel;
 import com.anyonavinfo.bluetoothphone.bpclient.custom.ClearEditText;
 import com.anyonavinfo.bluetoothphone.bpclient.custom.SideBar;
-import com.anyonavinfo.bluetoothphone.bpclient.utils.PinyinComparator;
 import com.anyonavinfo.bluetoothphone.bpclient.utils.CharacterParser;
-import com.anyonavinfo.bluetoothphone.bpclient.utils.Conts;
+import com.anyonavinfo.bluetoothphone.bpclient.utils.PinyinComparator;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 
 import java.util.ArrayList;
@@ -52,10 +46,10 @@ public class LinkmanFragment extends BaseFragment {
     private TextView tvLinkmanDelete;
     private TextView dialog;
     private CharacterParser characterParser;
-    private List<SortModel> SourceDateList;
     private PinyinComparator pinyinComparator;
     private SortAdapter adapter;
     private OnUiReady uiReadyListener;
+    private Button btnQuitDelete;
 
 
     @Override
@@ -121,9 +115,9 @@ public class LinkmanFragment extends BaseFragment {
                     }
                 }
                 btnDeleteLinkman.setText("删除（" + 0 + "）");
-                adapter.setCBVisibility(false);
                 adapter.updateListView(adapter.getData());
                 linkmanCbAll.setChecked(false);
+                adapter.setCBVisibility(false);
                 managerView(false);
             }
         });
@@ -152,7 +146,21 @@ public class LinkmanFragment extends BaseFragment {
             }
         });
 
+        btnQuitDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < adapter.getData().size(); i++) {
+                    adapter.getData().get(i).setChecked(false);
+                }
+                btnDeleteLinkman.setText("删除（" + 0 + "）");
+                linkmanCbAll.setChecked(false);
+                adapter.setCBVisibility(false);
+                managerView(false);
+            }
+        });
+
     }
+
 
     private void setViews() {
         characterParser = CharacterParser.getInstance();
@@ -162,6 +170,7 @@ public class LinkmanFragment extends BaseFragment {
         dialog = (TextView) view.findViewById(R.id.dialog);
         testListview = (ListView) view.findViewById(R.id.test_listview);
         btnEditLinkman = (Button) view.findViewById(R.id.btn_edit_linkman);
+        btnQuitDelete = (Button) view.findViewById(R.id.btn_quit_delete);
         linkmanTvAll = (TextView) view.findViewById(R.id.linkman_tv_all);
         linkmanCbAll = (CheckBox) view.findViewById(R.id.linkman_cb_all);
         btnDeleteLinkman = (Button) view.findViewById(R.id.btn_delete_linkman);
@@ -177,70 +186,54 @@ public class LinkmanFragment extends BaseFragment {
         adapter.updateListView(wrapPhoneBookList(callList));
     }
 
+    /** 电话本转换对象集合 并排序*/
     private ArrayList<MyPhoneBook> wrapPhoneBookList(ArrayList<PhoneBook> callList) {
         ArrayList<MyPhoneBook> phoneCalls = null;
         if (callList != null) {
             phoneCalls = new ArrayList<MyPhoneBook>();
             for (PhoneBook call : callList) {
                 MyPhoneBook myCall = new MyPhoneBook(call);
+                //获取姓名准备转换首字母，
+                String pbName=myCall.getPbname();
+                CharacterParser characterParser=CharacterParser.getInstance();
+                String pinyin = characterParser.getSelling(pbName);
+                String sortString = pinyin.substring(0, 1).toUpperCase();
+                // 正则表达式，判断首字母是否是英文字母
+                if(sortString.matches("[A-Z]")){
+                    myCall.setSortLetters(sortString.toUpperCase());
+                }else{
+                    myCall.setSortLetters("#");
+                }
+                myCall.setChecked(false);
                 phoneCalls.add(myCall);
             }
         }
+        //电话本数据排序
+        Collections.sort(phoneCalls, pinyinComparator);
         return phoneCalls;
     }
 
-    /**
-     * 为ListView填充数据
-     *
-     * @param date
-     * @return
-     */
-    private List<SortModel> filledData(String[] date) {
-        List<SortModel> mSortList = new ArrayList<SortModel>();
+    /** 筛选动作*/
+    private void filterData(String s) {
+        List<MyPhoneBook> filterDateList = new ArrayList<MyPhoneBook>();
+        List<MyPhoneBook> myPhoneBooks = adapter.getData();
 
-        for (int i = 0; i < date.length; i++) {
-            SortModel sortModel = new SortModel();
-            sortModel.setName(date[i]);
-            sortModel.setChecked(false);
-            //汉字转换成拼音
-            String pinyin = characterParser.getSelling(date[i]);
-            String sortString = pinyin.substring(0, 1).toUpperCase();
-
-            // 正则表达式，判断首字母是否是英文字母
-            if (sortString.matches("[A-Z]")) {
-                sortModel.setSortLetters(sortString.toUpperCase());
-            } else {
-                sortModel.setSortLetters("#");
-            }
-
-            mSortList.add(sortModel);
-        }
-        return mSortList;
-    }
-
-    /**
-     * 根据输入框中的值来过滤数据并更新ListView
-     *
-     * @param filterStr
-     */
-    private void filterData(String filterStr) {
-        List<SortModel> filterDateList = new ArrayList<SortModel>();
-
-        if (TextUtils.isEmpty(filterStr)) {
-            filterDateList = SourceDateList;
-        } else {
+        if(TextUtils.isEmpty(s)){
+            filterDateList = myPhoneBooks;
+        }else{
             filterDateList.clear();
-            for (SortModel sortModel : SourceDateList) {
-                String name = sortModel.getName();/**后续要把号码也拼接上，统一搜索*/
-                if (name.indexOf(filterStr.toString()) != -1 || characterParser.getSelling(name).startsWith(filterStr.toString())) {
-                    filterDateList.add(sortModel);
+            for(MyPhoneBook myPhoneBook : myPhoneBooks){
+                //后续要把号码也拼接上，统一搜索
+                String name = myPhoneBook.getPbname()+myPhoneBook.getPbnumber();
+                if(name.indexOf(s.toString()) != -1
+                        || characterParser.getSelling(name).startsWith(s.toString())){
+                    filterDateList.add(myPhoneBook);
                 }
             }
         }
-
         // 根据a-z进行排序
-//        Collections.sort(filterDateList, pinyinComparator);
-//        adapter.updateListView(filterDateList);
+        Collections.sort(filterDateList, pinyinComparator);
+        adapter.updateListView(filterDateList);
     }
 
     /**
@@ -254,6 +247,7 @@ public class LinkmanFragment extends BaseFragment {
             linkmanTvAll.setVisibility(View.VISIBLE);
             linkmanCbAll.setVisibility(View.VISIBLE);
             btnDeleteLinkman.setVisibility(View.VISIBLE);
+            btnQuitDelete.setVisibility(View.VISIBLE);
             ivLinkmanDivide.setVisibility(View.VISIBLE);
             tvLinkmanDelete.setVisibility(View.VISIBLE);
         } else {
@@ -263,6 +257,7 @@ public class LinkmanFragment extends BaseFragment {
             linkmanTvAll.setVisibility(View.GONE);
             linkmanCbAll.setVisibility(View.GONE);
             btnDeleteLinkman.setVisibility(View.GONE);
+            btnQuitDelete.setVisibility(View.GONE);
             ivLinkmanDivide.setVisibility(View.INVISIBLE);
             tvLinkmanDelete.setVisibility(View.GONE);
         }

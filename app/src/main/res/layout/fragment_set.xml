@@ -58,7 +58,6 @@
                 android:background="@null"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="GTX-960M"
                 android:textColor="#f4f4f4"
                 android:textSize="28px" />
 

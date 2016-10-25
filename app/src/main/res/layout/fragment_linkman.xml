@@ -20,7 +20,7 @@
         android:id="@+id/ll_search"
         android:layout_width="750px"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50px"
+        android:layout_marginTop="40px"
         android:orientation="horizontal"
         android:layout_marginRight="170px"
         android:layout_marginLeft="170px"
@@ -36,6 +36,9 @@
             android:hint="请输入关键字"
             android:singleLine="true"
             android:textSize="28px"
+            android:textCursorDrawable="@null"
+            android:textColor="@android:color/white"
+            android:imeOptions="actionDone"
             />
 
         <Button
@@ -142,4 +145,18 @@
         android:background="@null"
         android:visibility="gone"
         />
+    <Button
+        android:id="@+id/btn_quit_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ll_search"
+        android:layout_marginBottom="20px"
+        android:layout_alignParentBottom="true"
+        android:text="返回"
+        android:textSize="40px"
+        android:textColor="#ff6be3a9"
+        android:background="@null"
+        android:visibility="gone"
+        />
+
 </RelativeLayout>

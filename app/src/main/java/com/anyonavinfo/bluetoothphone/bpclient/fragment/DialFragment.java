@@ -3,7 +3,9 @@ package com.anyonavinfo.bluetoothphone.bpclient.fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 
 import java.lang.reflect.Method;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 /**
@@ -86,6 +90,30 @@ public class DialFragment extends BaseFragment implements View.OnClickListener {
                 return false;
             }
         });
+
+
+        etNumb.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                etNumb.requestFocus();
+                if (etNumb.getText().length() > 0) {
+                    ibtnDeleteNumb.setVisibility(View.VISIBLE);
+                } else {
+                    ibtnDeleteNumb.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 
     private void setViews() {
@@ -107,6 +135,13 @@ public class DialFragment extends BaseFragment implements View.OnClickListener {
         }
 
         ibtnDeleteNumb = (ImageButton) view.findViewById(R.id.ibtn_delete_numb);
+
+        if (etNumb.getText().length() > 0) {
+            ibtnDeleteNumb.setVisibility(View.VISIBLE);
+        } else {
+            ibtnDeleteNumb.setVisibility(View.INVISIBLE);
+        }
+
 
         dialNum1 = (ImageButton) view.findViewById(R.id.dialNum1);
         dialNum2 = (ImageButton) view.findViewById(R.id.dialNum2);
@@ -176,7 +211,9 @@ public class DialFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.dialCall:
                 if (CommonData.hfpStatu < 2) {
-                    Toast.makeText(getActivity(), "蓝牙未连接", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("蓝牙未连接!")
+                            .show();
                 } else {
                     String number = etNumb.getText().toString();//获取号码待用
                     ((MainActivity) getActivity()).phoneService.phoneDail(number);

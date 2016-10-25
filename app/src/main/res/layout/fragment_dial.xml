@@ -20,6 +20,7 @@
             android:inputType="phone"
             android:paddingLeft="90px"
             android:textColor="#ffffff"
+            android:textCursorDrawable="@null"
             android:textSize="48px" />
 
         <ImageButton

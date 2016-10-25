@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
+
 
 /**
  * Created by Drive on 2016/10/11.
@@ -149,6 +148,9 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_CONNECTED;
         sendMessage(msg);
+      /*  Volchannel.set_volchannel_state(1);
+        Log.e(TAG, "onVoiceConnected: state = "+Volchannel.get_volchannel_state());*/
+
     }
 
     @Override
@@ -158,6 +160,8 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_DISCONNECTED;
         sendMessage(msg);
+       /* Volchannel.set_volchannel_state(1);
+        Log.e(TAG, "onVoiceConnected: state = "+Volchannel.get_volchannel_state());*/
     }
 
     @Override

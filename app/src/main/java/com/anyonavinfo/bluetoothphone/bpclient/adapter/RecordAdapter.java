@@ -1,11 +1,11 @@
 package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -14,12 +14,12 @@ import android.widget.TextView;
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.MyPhoneCall;
-import com.anyonavinfo.bluetoothphone.bpclient.utils.Conts;
-import com.anyonavinfo.bluetoothphone.bpservice.database.dao.PhoneBookDao;
 import com.anyonavinfo.bluetoothphone.bpservice.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 
 public class RecordAdapter extends BaseAdapter {
@@ -124,10 +124,12 @@ public class RecordAdapter extends BaseAdapter {
             viewHolder.checkBox.setChecked(false);
         }
 
+        //时间显示转换是否完成？
         viewHolder.tvName.setText(phoneCall.getCallName());
         viewHolder.tvNumb.setText(phoneCall.getCallNumber());
-        //时间显示转换是否完成？
-        viewHolder.tvTime.setText(TimeUtils.getRecentTime(phoneCall.getCallTime()));
+        if (phoneCall!=null){
+            viewHolder.tvTime.setText(TimeUtils.getRecentTime(phoneCall.getCallTime()));
+        }
         viewHolder.tvAddress.setText(phoneCall.getCallPlace());
         viewHolder.checkBox.setFocusable(false);
         return view;

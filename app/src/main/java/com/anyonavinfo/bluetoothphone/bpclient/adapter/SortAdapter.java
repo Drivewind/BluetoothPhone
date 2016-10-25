@@ -1,9 +1,7 @@
 package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.MyPhoneBook;
-import com.anyonavinfo.bluetoothphone.bpclient.utils.Conts;
 
 import java.util.ArrayList;
 import java.util.List;

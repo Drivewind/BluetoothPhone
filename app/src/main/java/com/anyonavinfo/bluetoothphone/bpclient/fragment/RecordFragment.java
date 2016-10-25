@@ -1,13 +1,9 @@
 package com.anyonavinfo.bluetoothphone.bpclient.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,19 +11,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.R;
+import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.adapter.RecordAdapter;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.MyPhoneCall;
-import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
-import com.anyonavinfo.bluetoothphone.bpclient.utils.Conts;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -43,10 +35,11 @@ public class RecordFragment extends BaseFragment {
     private ImageView ivRecordDivide;
     private ListView lvRecordInfos;
     public Button btnRecordDelete;
+    private Button btnQuitDelete;
+
     private RecordAdapter adapter;
 
     private OnUiReady uiReadyListener;
-
     private MainActivity mainActivity;
 
 
@@ -65,6 +58,7 @@ public class RecordFragment extends BaseFragment {
     }
 
     private void addListener() {
+        /** 编辑联系人*/
         btnEditRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,10 +66,11 @@ public class RecordFragment extends BaseFragment {
                 managerView(true);
             }
         });
+
+        /**准备执行删除功能*/
         btnRecordDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**准备执行删除功能*/
                 for (int i = adapter.getData().size() - 1; i >= 0; i--) {
                     if (adapter.getData().get(i).isChecked()) {
                         ((MainActivity)getActivity()).phoneService.deletePhoneCall(adapter.getData().get(i).getCallNumber(),adapter.getData().get(i).getCallTime());
@@ -91,8 +86,6 @@ public class RecordFragment extends BaseFragment {
 
         });
 
-
-
         cbRecordAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -105,7 +98,18 @@ public class RecordFragment extends BaseFragment {
             }
         });
 
-
+        btnQuitDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = adapter.getData().size() - 1; i >= 0; i--) {
+                    adapter.getData().get(i).setChecked(false);
+                }
+                btnRecordDelete.setText("删除（" + 0 + "）");
+                cbRecordAll.setChecked(false);
+                adapter.setCBVisibility(false);
+                managerView(false);
+            }
+        });
 
         lvRecordInfos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -127,6 +131,7 @@ public class RecordFragment extends BaseFragment {
         ivRecordDivide = (ImageView) view.findViewById(R.id.iv_record_divide);
         lvRecordInfos = (ListView) view.findViewById(R.id.lv_record_infos);
         btnRecordDelete = (Button) view.findViewById(R.id.btn_record_delete);
+        btnQuitDelete = (Button) view.findViewById(R.id.btn_quit_delete);
 
         //通话记录
         mainActivity = (MainActivity) getActivity();
@@ -157,6 +162,7 @@ public class RecordFragment extends BaseFragment {
             tvRecoedAll.setVisibility(View.VISIBLE);
             cbRecordAll.setVisibility(View.VISIBLE);
             btnRecordDelete.setVisibility(View.VISIBLE);
+            btnQuitDelete.setVisibility(View.VISIBLE);
             ivRecordDivide.setVisibility(View.VISIBLE);
             tvRecordDelete.setVisibility(View.VISIBLE);
         }else{
@@ -164,6 +170,7 @@ public class RecordFragment extends BaseFragment {
             tvRecoedAll.setVisibility(View.GONE);
             cbRecordAll.setVisibility(View.GONE);
             btnRecordDelete.setVisibility(View.GONE);
+            btnQuitDelete.setVisibility(View.GONE);
             ivRecordDivide.setVisibility(View.INVISIBLE);
             tvRecordDelete.setVisibility(View.GONE);
         }

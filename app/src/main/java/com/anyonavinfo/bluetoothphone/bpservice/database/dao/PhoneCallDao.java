@@ -3,6 +3,7 @@ package com.anyonavinfo.bluetoothphone.bpservice.database.dao;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.anyonavinfo.bluetoothphone.bpservice.database.SqliteHelper;
@@ -176,5 +177,22 @@ public class PhoneCallDao extends SqliteHelper {
             }
         }
         return calllist;
+    }
+
+    public String queryPhonePlaceFromPC(String bdaddr, String number) {
+        ArrayList<PhoneCall> calllist = null;
+        Cursor cursor = db.rawQuery("select callplace from " + SqliteHelper.TABLE_NAME_PHONECALL + " where bdaddr = ? and callnumber=?", new String[]{
+                bdaddr, number
+        });
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String place = cursor.getString(cursor
+                        .getColumnIndex("callplace"));
+                if(!TextUtils.isEmpty(place)){
+                    return place;
+                }
+            }
+        }
+        return "";
     }
 }

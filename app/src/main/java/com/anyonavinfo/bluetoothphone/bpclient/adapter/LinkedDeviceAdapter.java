@@ -1,6 +1,8 @@
 package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,10 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.anyonavinfo.bluetoothphone.R.id.dialog;
+
 
 /**
  * Created by shijj on 2016/9/21.
@@ -29,6 +35,7 @@ public class LinkedDeviceAdapter extends BaseAdapter {
     private ArrayList<DeviceBean> deviceList;
     private Context mContext;
     private LayoutInflater inflater;
+    public SweetAlertDialog sweetAlertDialog;
 
     public LinkedDeviceAdapter(Context context, ArrayList<DeviceBean> data) {
         mContext = context;
@@ -89,12 +96,34 @@ public class LinkedDeviceAdapter extends BaseAdapter {
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (deviceBean.getDeviceState() == 1) {
-                    ((MainActivity) mContext).phoneService.disconnect();
-                }
-                ((MainActivity) mContext).phoneService.deletePair(deviceBean.getDeviceAddr());
-                deviceList.remove(deviceBean);
-                LinkedDeviceAdapter.this.notifyDataSetChanged();
+                sweetAlertDialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
+                sweetAlertDialog.setTitleText("是否删除该设备！");
+                sweetAlertDialog.setCancelText("不");
+                sweetAlertDialog.setConfirmText("是");
+                sweetAlertDialog.showCancelButton(true);
+                sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        // reuse previous dialog instance, keep widget user state, reset them if you need
+                        sDialog.cancel();
+
+                    }
+                });
+                sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        if (deviceBean.getDeviceState() == 1) {
+                            ((MainActivity) mContext).phoneService.disconnect();
+                        }
+                        ((MainActivity) mContext).phoneService.deletePair(deviceBean.getDeviceAddr());
+                        deviceList.remove(deviceBean);
+                        LinkedDeviceAdapter.this.notifyDataSetChanged();
+                        sDialog.cancel();
+                    }
+                });
+                sweetAlertDialog.show();
+
+
             }
         });
         holder.device_name.setText(deviceBean.getDeviceName());
@@ -104,15 +133,15 @@ public class LinkedDeviceAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 if (deviceBean.getDeviceState() == 0) {
-                    for(DeviceBean bean:deviceList){
-                        if(bean.getDeviceState()==2)
+                    for (DeviceBean bean : deviceList) {
+                        if (bean.getDeviceState() == 2)
                             return;
                     }
                     if (CommonData.hfpStatu >= 2) {
                         ((MainActivity) mContext).phoneService.disconnect();
                         time = 6000;
-                    }else{
-                        time=0;
+                    } else {
+                        time = 0;
                     }
                     ((MainActivity) mContext).postDelayedRunnable(new Runnable() {
                         @Override
@@ -140,6 +169,5 @@ public class LinkedDeviceAdapter extends BaseAdapter {
         TextView device_status;
         Button delete;
     }
-
 
 }

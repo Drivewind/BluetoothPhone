@@ -2,11 +2,14 @@ package com.anyonavinfo.bluetoothphone.bpclient.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -27,8 +30,11 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
 import com.anyonavinfo.bluetoothphone.bpservice.service.BluetoothPhoneService;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 /**
@@ -151,13 +157,24 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
         builder.setTitle("请修改设备名称");    //设置对话框标题
         //builder.setIcon(android.R.drawable.ic_dialog_info);
         final EditText edit = new EditText(getActivity());
-        edit.setPadding(0, 50, 0, 0);
+        edit.setPadding(20, 30, 10, 10);
         edit.setTextSize(25);
+        edit.setSingleLine(true);
+       /* try {
+            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+            f.setAccessible(true);
+            f.set(edit, R.color.sweet_dialog_bg_color);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }*/
+        edit.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
         builder.setView(edit);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //ed_dev_name.setText(edit.getText().toString());
                 String reviseName = edit.getText().toString();
                 ((MainActivity) getActivity()).phoneService.setLocalName(reviseName);
 
@@ -186,7 +203,9 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.async_contacts_application:
                 if (CommonData.hfpStatu < 2) {
-                    Toast.makeText(getActivity(), "蓝牙未连接", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("蓝牙未连接!")
+                            .show();
                 } else {
                     ((MainActivity) getActivity()).showProgressDialog();
                 }

@@ -303,9 +303,10 @@ public class BluetoothPhoneHal {
             }
         }
     }
-    public void deletePhoneBook(String number){
+
+    public void deletePhoneBook(String number) {
         if (!TextUtils.isEmpty(mCurDevAddr)) {
-            phoneBookDao.deletePhoneBook(mCurDevAddr,number);
+            phoneBookDao.deletePhoneBook(mCurDevAddr, number);
         }
     }
 
@@ -376,23 +377,17 @@ public class BluetoothPhoneHal {
             String number = receivedMcu.substring(4);
             isPhoneInCall = true;
             mComingPhoneNum = number;
-            if (TextUtils.isEmpty(phoneBookDao.queryPhonePlace(mCurDevAddr, number))) {
-                getPhoneOperator(number);
-            }
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("DLID")) {
             String number = receivedMcu.substring(4);
             if (mDiaingPhoneNum == null) ;
             {
                 String callName = phoneBookDao.queryPhoneName(mCurDevAddr, number);
-                PhoneCall call = new PhoneCall(mCurDevAddr, callName, number, 3, phoneBookDao.queryPhonePlace(mCurDevAddr, number));
+                PhoneCall call = new PhoneCall(mCurDevAddr, callName, number, 3, getPhoneOperatorFromDB(number));
                 phoneCallDao.insertPhoneCall(call);
                 callback.onCalllog(call);
             }
             isPhoneDialing = true;
             mDiaingPhoneNum = number;
-            if (TextUtils.isEmpty(phoneBookDao.queryPhonePlace(mCurDevAddr, number))) {
-                getPhoneOperator(number);
-            }
         } else if (receivedMcu.length() >= 3 && receivedMcu.substring(0, 3).equals("VS=")) {
             int avVolume = Integer.valueOf(receivedMcu.substring(3, receivedMcu.indexOf(",")));
             int hfpVolume = Integer.valueOf(receivedMcu.substring(receivedMcu.indexOf(",") + 1));
@@ -472,7 +467,7 @@ public class BluetoothPhoneHal {
                         if (hfpStatus.equals("4")) {
                             if (mComingPhoneNum != null) {
                                 String callName = phoneBookDao.queryPhoneName(mCurDevAddr, mComingPhoneNum);
-                                PhoneCall call = new PhoneCall(mCurDevAddr, callName, mComingPhoneNum, 2, phoneBookDao.queryPhonePlace(mCurDevAddr, mComingPhoneNum));
+                                PhoneCall call = new PhoneCall(mCurDevAddr, callName, mComingPhoneNum, 2, getPhoneOperatorFromDB(mComingPhoneNum));
                                 phoneCallDao.insertPhoneCall(call);
                                 callback.onCalllog(call);
                             }
@@ -482,16 +477,14 @@ public class BluetoothPhoneHal {
                     break;
                 case "3":
                     if (hfpStatus.equals("2")) {
-                        if (mDiaingPhoneNum != null && mCurDevAddr != null) {
-                            callback.onDialing(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
+                        if (mDiaingPhoneNum != null && mCurDevName != null) {
+                            dialCallback();
                         } else {
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (mDiaingPhoneNum != null && mCurDevAddr != null) {
-                                        callback.onDialing(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
-                                    } else {
-                                        return;
+                                    if (mDiaingPhoneNum != null && mCurDevName != null) {
+                                        dialCallback();
                                     }
                                 }
                             }, 200);
@@ -501,21 +494,18 @@ public class BluetoothPhoneHal {
                     break;
                 case "4":
                     if (hfpStatus.equals("2")) {
-                        if (mComingPhoneNum != null && mCurDevAddr != null) {
-                            callback.onIncoming(phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum));
+                        if (mComingPhoneNum != null && mCurDevName != null) {
+                            comingCallback();
                         } else {
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (mComingPhoneNum != null && mCurDevAddr != null) {
-                                        callback.onIncoming(phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum));
-                                    } else {
-                                        return;
+                                    if (mComingPhoneNum != null && mCurDevName != null) {
+                                        comingCallback();
                                     }
                                 }
                             }, 200);
                         }
-
                     }
 
                     break;
@@ -524,7 +514,7 @@ public class BluetoothPhoneHal {
                     if (hfpStatus.equals("4")) {
                         if (mComingPhoneNum != null && mCurDevAddr != null) {
                             PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum);
-                            PhoneCall call = new PhoneCall(mCurDevAddr, book.getPbname(), mComingPhoneNum, 1, book.getPbplace());
+                            PhoneCall call = new PhoneCall(mCurDevAddr, book.getPbname(), mComingPhoneNum, 1, getPhoneOperatorFromDB(mComingPhoneNum));
                             phoneCallDao.insertPhoneCall(call);
                             callback.onCalllog(call);
                             callback.onCallSuccessed(book);
@@ -619,15 +609,45 @@ public class BluetoothPhoneHal {
         }
     }
 
-    private void getPhoneOperator(final String number) {
+    private String getPhoneOperatorFromDB(String number) {
+        String operator = phoneBookDao.queryPhonePlace(mCurDevAddr, number);
+        if (TextUtils.isEmpty(operator)) {
+            operator = phoneCallDao.queryPhonePlaceFromPC(mCurDevAddr, number);
+        }
+        return operator;
+    }
+
+    private void dialCallback() {
+        PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum);
+        String operator = getPhoneOperatorFromDB(mDiaingPhoneNum);
+        if (TextUtils.isEmpty(operator)) {
+            getPhoneOperatorFromNet(mDiaingPhoneNum);
+        } else {
+            book.setPbplace(operator);
+        }
+        callback.onDialing(book);
+    }
+
+    private void comingCallback() {
+        PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum);
+        String operator = getPhoneOperatorFromDB(mComingPhoneNum);
+        if (TextUtils.isEmpty(operator)) {
+            getPhoneOperatorFromNet(mComingPhoneNum);
+        } else {
+            book.setPbplace(operator);
+        }
+        callback.onIncoming(book);
+    }
+
+    private void getPhoneOperatorFromNet(final String number) {
         if (NetWorkUtil.isConnected(mContext)) {
             HttpUtil httpUtil = new HttpUtil();
             httpUtil.getJson(TelApi.API + "?tel=" + number, TelApi.key, new HttpUtil.HttpCallBack() {
                 @Override
                 public void onSusscess(String data) {
-                    Log.e(TAG, "onSusscess: "+data );
+                    Log.e(TAG, "onSusscess: " + data);
                     TelPlace place = JsonUtil.parseJsonToBean(data, TelPlace.class);
-                    if(place!=null&&place.getRetData()!=null){
+                    if (place != null && place.getRetData() != null) {
                         String operator = place.getRetData().getCarrier();
                         phoneBookDao.updatePhoneBookPlace(mCurDevAddr, number, operator);
                         phoneCallDao.updatePhoneCallPlace(mCurDevAddr, number, operator);
