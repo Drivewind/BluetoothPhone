@@ -49,6 +49,9 @@ public class SerialPort {
     private native static FileDescriptor open(String path, int baudrate, int flags);
     public native void close();
 
+    public native static int getVolumeChannelState();
+    public native static int setVolumeChannelState(int channel);
+
     static {
         System.loadLibrary("imxserial");
     }

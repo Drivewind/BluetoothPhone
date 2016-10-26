@@ -23,6 +23,22 @@ JNIEXPORT jobject JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxseria
 JNIEXPORT void JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_SerialPort_close
         (JNIEnv *, jobject);
 
+/*
+ * Class:     com_anyonavinfo_bluetoothphone_bpservice_imxserial_VolumeChannel
+ * Method:    getVolumeChannelState
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_SerialPort_getVolumeChannelState
+        (JNIEnv *, jclass);
+
+/*
+ * Class:     com_anyonavinfo_bluetoothphone_bpservice_imxserial_VolumeChannel
+ * Method:    setVolumeChannelState
+ * Signature: (I)V
+ */
+JNIEXPORT jint JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_SerialPort_setVolumeChannelState
+        (JNIEnv *, jclass, jint);
+
 #ifdef __cplusplus
 }
 #endif

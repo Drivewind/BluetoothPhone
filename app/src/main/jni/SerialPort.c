@@ -16,20 +16,24 @@
 
 #include <termios.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <string.h>
 #include <jni.h>
 
-#include "SerialPort.h"
+#include <stdio.h>
+
 
 #include "android/log.h"
+
+#include "SerialPort.h"
 
 static const char *TAG = "serial_port";
 #define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO,  TAG, fmt, ##args)
 #define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, TAG, fmt, ##args)
-#define LOGE(fmt, args...) __android_log_print(ANDROID_LOG_ERROR, TAG, fmt, ##args)
+#define LOGE(args...) __android_log_print(ANDROID_LOG_ERROR, TAG,  ##args)
+
+#define IOC_MANGIC		'X'
+#define IOC_SETSTATE	_IOW(IOC_MANGIC, 1, int)
+#define IOC_GETSTATE	_IOR(IOC_MANGIC, 2, int)
 
 static int GPIOfd;
 static int lastfd = -1;
@@ -201,5 +205,55 @@ JNIEXPORT void JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_S
         close(lastfd);
         lastfd = -1;
     }
+}
+
+JNIEXPORT jint JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_SerialPort_getVolumeChannelState(JNIEnv *env, jobject clazz)
+{
+    int fd = 0;
+    int ret;
+    int arg;
+
+    fd = open("/dev/volchannel_state",O_RDWR);
+    if (fd < 0)
+    {
+        printf("Open volchannel_state Error!\n");
+        LOGE("Open volchannel_state Error!");
+        return -1;
+    }
+    ret = ioctl(fd, IOC_GETSTATE, &arg);
+    if(arg != 0 && arg != 1)
+        arg = -1;
+    close(fd);
+    return arg;
+}
+/**
+para: state
+1-sethigh
+0-setlow
+*/
+JNIEXPORT jint JNICALL Java_com_anyonavinfo_bluetoothphone_bpservice_imxserial_SerialPort_setVolumeChannelState(JNIEnv *env, jobject clazz, jint state)
+{
+    int fd = 0;
+    int ret;
+    int arg;
+
+    fd = open("/dev/volchannel_state",O_RDWR);
+    if (fd < 0)
+    {
+        printf("Open volchannel_state Error!\n");
+    }
+
+
+    if(!state)
+    {
+        arg = 0;
+        ret = ioctl(fd, IOC_SETSTATE, &arg);
+    }
+    else
+    {
+        arg = 1;
+        ret = ioctl(fd, IOC_SETSTATE, &arg);
+    }
+    return ret;
 }
 

@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
-
+import com.anyonavinfo.bluetoothphone.bpservice.imxserial.SerialPort;
+//import com.byter.hardware.volchannel.Volchannel;
 
 /**
  * Created by Drive on 2016/10/11.
@@ -20,7 +22,7 @@ public class IBPCallbackImpl implements IBPCallback {
     private Handler mHandler;
     private Context mContext;
     private static IBPCallbackImpl callback;
-    private TalkingThread talkingThread ;
+    private TalkingThread talkingThread;
 
 
     private IBPCallbackImpl(Context context) {
@@ -79,8 +81,8 @@ public class IBPCallbackImpl implements IBPCallback {
         Bundle bundle = new Bundle();
         bundle.putString("name", book.getPbname());
         bundle.putString("number", book.getPbnumber());
-        bundle.putString("place",book.getPbplace());
-        launchActivity(mContext,"com.anyonavinfo.bluetoothphone",bundle);
+        bundle.putString("place", book.getPbplace());
+        launchActivity(mContext, "com.anyonavinfo.bluetoothphone", bundle);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class IBPCallbackImpl implements IBPCallback {
         Bundle bundle = new Bundle();
         bundle.putString("name", book.getPbname());
         bundle.putString("number", book.getPbnumber());
-        bundle.putString("place",book.getPbplace());
+        bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
     }
@@ -100,8 +102,8 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onHangUp() {
         Log("The phone is hang up !");
-        if(talkingThread!=null){
-            CommonData.talkingTime=-10;
+        if (talkingThread != null) {
+            CommonData.talkingTime = -10;
             talkingThread = null;
         }
         CommonData.talkingContact = null;
@@ -119,14 +121,14 @@ public class IBPCallbackImpl implements IBPCallback {
         Bundle bundle = new Bundle();
         bundle.putString("name", book.getPbname());
         bundle.putString("number", book.getPbnumber());
-        bundle.putString("place",book.getPbplace());
+        bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
     }
 
     @Override
     public void onCallSuccessed(PhoneBook book) {
-        Log("You had call "+book.getPbname()+" successfully !");
+        Log("You had call " + book.getPbname() + " successfully !");
         CommonData.talkingContact = book;
         CommonData.talkingTime = 0;
         talkingThread = new TalkingThread();
@@ -136,7 +138,7 @@ public class IBPCallbackImpl implements IBPCallback {
         Bundle bundle = new Bundle();
         bundle.putString("name", book.getPbname());
         bundle.putString("number", book.getPbnumber());
-        bundle.putString("place",book.getPbplace());
+        bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
     }
@@ -148,8 +150,8 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_CONNECTED;
         sendMessage(msg);
-      /*  Volchannel.set_volchannel_state(1);
-        Log.e(TAG, "onVoiceConnected: state = "+Volchannel.get_volchannel_state());*/
+        int n = SerialPort.setVolumeChannelState(1);
+        Log.e("serial_port", "onVoiceConnected: state = " + n);
 
     }
 
@@ -160,8 +162,8 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_DISCONNECTED;
         sendMessage(msg);
-       /* Volchannel.set_volchannel_state(1);
-        Log.e(TAG, "onVoiceConnected: state = "+Volchannel.get_volchannel_state());*/
+        int n =SerialPort.setVolumeChannelState(0);
+        Log.e("serial_port", "onVoiceDisConnected: state = " + n);
     }
 
     @Override
@@ -302,7 +304,7 @@ public class IBPCallbackImpl implements IBPCallback {
         Bundle bundle = new Bundle();
         bundle.putString("name", book.getPbname());
         bundle.putString("number", book.getPbnumber());
-        bundle.putString("place",book.getPbplace());
+        bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
     }
@@ -369,13 +371,13 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onPhoneOperatorSuccessed(String operator) {
         Log("Phone operator is get for network successfully !");
-        if(CommonData.talkingContact!=null){
+        if (CommonData.talkingContact != null) {
             CommonData.talkingContact.setPbplace(operator);
         }
         Message msg = new Message();
         msg.what = CommonData.PHONEOPERATOR_SUCCESSED;
         Bundle bundle = new Bundle();
-        bundle.putString("operator",operator);
+        bundle.putString("operator", operator);
         msg.setData(bundle);
         sendMessage(msg);
     }
@@ -383,20 +385,22 @@ public class IBPCallbackImpl implements IBPCallback {
     class TalkingThread extends Thread {
         @Override
         public void run() {
-            while (CommonData.talkingTime>-1){
+            while (CommonData.talkingTime > -1) {
                 Message msg = new Message();
                 msg.what = CommonData.UPDATE_TALKING_TIME;
                 msg.arg1 = CommonData.talkingTime;
                 sendMessage(msg);
                 try {
-                Thread.sleep(1000);
-                CommonData.talkingTime++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }}
+                    Thread.sleep(1000);
+                    CommonData.talkingTime++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
-    public static boolean launchActivity(Context context, String packageName,Bundle bundle) {
+
+    public static boolean launchActivity(Context context, String packageName, Bundle bundle) {
         if (packageName != null && !packageName.equals("")
                 ) {
             Intent intent = context.getPackageManager()
@@ -404,7 +408,7 @@ public class IBPCallbackImpl implements IBPCallback {
             intent.putExtras(bundle);
             intent.setAction("PHONE_INCOMING");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if(intent.resolveActivity(context.getPackageManager())!=null){
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
             }
             return true;

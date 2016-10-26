@@ -334,7 +334,7 @@ public class BluetoothPhoneHal {
      */
     public void inMcu(byte[] rcvFromMcu) {
         String receivedMcu = new String(rcvFromMcu);
-//        Log.e(TAG, "received message is :" + receivedMcu);
+        Log.e(TAG, "received message is :" + receivedMcu);
         if (receivedMcu.equals("OK") || receivedMcu.equals("ERR") || receivedMcu.equals("ACK")
                 ) {
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("PWR=")) {
