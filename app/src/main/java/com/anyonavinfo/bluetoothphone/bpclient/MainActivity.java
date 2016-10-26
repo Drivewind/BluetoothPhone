@@ -33,6 +33,7 @@ import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallback;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallbackImpl;
+import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragmentActivity;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.service.BluetoothPhoneService;
@@ -46,6 +47,9 @@ import com.anyonavinfo.bluetoothphone.bpclient.fragment.SetFragment;
 import com.anyonavinfo.bluetoothphone.bpservice.utils.TimeUtils;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static android.R.attr.fragment;
+import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends BaseFragmentActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -76,6 +80,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public Handler mHandler;
 
     public BluetoothPhoneService phoneService;
+
+    private BaseFragment preFragment, curFragment;
+    private boolean isFristOn;
 
     /* public ProgressDialog progressDialog;
      public AlertDialog.Builder builder;
@@ -149,6 +156,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         public void onServiceConnected(ComponentName name, IBinder service) {
             if (getIntent().getAction().equals("PHONE_INCOMING")) {
                 initFragment(4);
+                preFragment = null;
+                isFristOn = true;
             } else if (getIntent().getAction().equals("android.intent.action.MAIN")) {
                 if (CommonData.hfpStatu <= 2) {
                     initFragment(0);
@@ -178,6 +187,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             @Override
             public void uiIsReady() {
                 if (CommonData.hfpStatu >= 2) {
+                    setFragment.aSwitch.setChecked(true);
                     setFragment.updateDeviceState(CommonData.curDeviceAddr, 1);
                 } else {
                     setFragment.updateDeviceState(CommonData.curDeviceAddr, 0);
@@ -221,8 +231,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 callerIDsFragment.setCallData(CommonData.talkingContact);
             }
         });
-
-
+        curFragment = setFragment;
         //transformCallIDsFragment();根据来点显示打开
         transaction = fm.beginTransaction();
         transaction.add(R.id.frameLayout, setFragment, FRAGMENT_SET)
@@ -284,9 +293,16 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         for (Fragment fragment : fm.getFragments()) {
             if (!fragment.getTag().equals(tag)) {
                 ft.hide(fragment);
+            } else {
+                preFragment = curFragment;
+                curFragment = (BaseFragment) fragment;
+                if (curFragment.equals(callerIDsFragment)) {
+                    curFragment = preFragment;
+                }
             }
         }
         ft.show(fm.findFragmentByTag(tag)).commit();
+
     }
 
     @Override
@@ -295,7 +311,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     private void toTalkingFragment() {
-        transformConnectFragment();
+        if (!curFragment.equals(connectingFragment)) {
+            transformConnectFragment();
+        } else {
+
+        }
         connectingFragment.setCallData(CommonData.talkingContact);
     }
 
@@ -360,9 +380,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         switch (buttonView.getId()) {
             case R.id.rbtn_call_dial:
                 if (isChecked) {
-                    connectingFragment.showCallLayoutIn();
+                    //connectingFragment.showCallLayoutIn();
                 } else {
-                    connectingFragment.showCallLayoutOut();
+                    //connectingFragment.showCallLayoutOut();
                 }
                 break;
             case R.id.rbtn_call_mute:
@@ -430,6 +450,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(connectRunnable);
         collectHandler();
         unbindService(conn);
         LogcatHelper.getInstance(this).stop();
@@ -521,9 +542,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.PHONE_TALKING:
                 break;
             case CommonData.PHONE_HANGUP:
-                transformRecordFragment();
-                showfourIcons();
-                ((RadioButton) rightMenu.getChildAt(3)).setChecked(true);
+                if (preFragment == null || isFristOn) {
+                    finish();
+                } else {
+                    toFragment(preFragment.getTag());
+                    curFragment.showIcon();
+                }
                 break;
             case CommonData.PHONE_CALL_SUCCESSED:
                 toTalkingFragment();
@@ -594,7 +618,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
                 sb.append(sec);
                 connectingFragment.call_connect.setText(sb.toString());
-                connectingFragment.call_time.setText(sb.toString());
+                //connectingFragment.call_time.setText(sb.toString());
                 break;
             case 0x3001:
                 recordFragment.btnRecordDelete.setText("删除（" + msg.arg1 + "）");

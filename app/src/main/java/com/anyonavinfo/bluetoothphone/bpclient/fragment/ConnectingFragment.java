@@ -29,6 +29,8 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 
 import java.lang.reflect.Method;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by shijj on 2016/9/12.
  */
@@ -274,19 +276,24 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         super.onDestroy();
         Log.d("test", "detroy");
     }
-    public interface  OnUiReady{
+
+    public interface OnUiReady {
         void uiIsReady();
     }
-    public void setOnUiReadyListener(OnUiReady uiReady){
+
+    public void setOnUiReadyListener(OnUiReady uiReady) {
         this.uiReadyListener = uiReady;
     }
-    private void uiReady(){
-        if(this.uiReadyListener!=null){
+
+    private void uiReady() {
+        if (this.uiReadyListener != null) {
             this.uiReadyListener.uiIsReady();
         }
     }
+
     public void setCallData(PhoneBook book) {
-        if(book==null){
+        //Log.e("place", book.getPbplace());
+        if (book == null) {
             return;
         }
         if (book.getPbname().equals("陌生号码")) {
@@ -294,10 +301,19 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         } else {
             call_name.setText(book.getPbname());
         }
+
         call_dist.setText(book.getPbplace());
-        if(CommonData.hfpStatu==3){
+        if (CommonData.hfpStatu == 3) {
             call_connect.setText("拨号中");
         }
     }
 
+    @Override
+    public void showIcon() {
+        if (CommonData.hfpStatu == 3) {
+            ((MainActivity) getActivity()).showfourIcons();
+        } else {
+            ((MainActivity) getActivity()).showThreeIcons();
+        }
+    }
 }

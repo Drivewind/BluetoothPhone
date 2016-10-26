@@ -377,17 +377,42 @@ public class BluetoothPhoneHal {
             String number = receivedMcu.substring(4);
             isPhoneInCall = true;
             mComingPhoneNum = number;
+            if (mComingPhoneNum != null && mCurDevName != null) {
+                comingCallback();
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mComingPhoneNum != null && mCurDevName != null) {
+                            comingCallback();
+                        }
+                    }
+                }, 200);
+            }
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("DLID")) {
-            String number = receivedMcu.substring(4);
-            if (mDiaingPhoneNum == null) ;
-            {
+           final String number = receivedMcu.substring(4);
+
+            mDiaingPhoneNum = number;
+            if (mDiaingPhoneNum != null && mCurDevName != null) {
                 String callName = phoneBookDao.queryPhoneName(mCurDevAddr, number);
                 PhoneCall call = new PhoneCall(mCurDevAddr, callName, number, 3, getPhoneOperatorFromDB(number));
                 phoneCallDao.insertPhoneCall(call);
                 callback.onCalllog(call);
+                dialCallback();
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mDiaingPhoneNum != null && mCurDevName != null) {
+                            String callName = phoneBookDao.queryPhoneName(mCurDevAddr, number);
+                            PhoneCall call = new PhoneCall(mCurDevAddr, callName, number, 3, getPhoneOperatorFromDB(number));
+                            phoneCallDao.insertPhoneCall(call);
+                            callback.onCalllog(call);
+                            dialCallback();
+                        }
+                    }
+                }, 200);
             }
-            isPhoneDialing = true;
-            mDiaingPhoneNum = number;
         } else if (receivedMcu.length() >= 3 && receivedMcu.substring(0, 3).equals("VS=")) {
             int avVolume = Integer.valueOf(receivedMcu.substring(3, receivedMcu.indexOf(",")));
             int hfpVolume = Integer.valueOf(receivedMcu.substring(receivedMcu.indexOf(",") + 1));
@@ -476,38 +501,38 @@ public class BluetoothPhoneHal {
                     phoneStateReset();
                     break;
                 case "3":
-                    if (hfpStatus.equals("2")) {
-                        if (mDiaingPhoneNum != null && mCurDevName != null) {
-                            dialCallback();
-                        } else {
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mDiaingPhoneNum != null && mCurDevName != null) {
-                                        dialCallback();
-                                    }
-                                }
-                            }, 200);
-                        }
-
-                    }
+//                    if (hfpStatus.equals("2")) {
+//                        if (mDiaingPhoneNum != null && mCurDevName != null) {
+//                            dialCallback();
+//                        } else {
+//                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if (mDiaingPhoneNum != null && mCurDevName != null) {
+//                                        dialCallback();
+//                                    }
+//                                }
+//                            }, 200);
+//                        }
+//
+//                    }
                     break;
                 case "4":
-                    if (hfpStatus.equals("2")) {
-                        if (mComingPhoneNum != null && mCurDevName != null) {
-                            comingCallback();
-                        } else {
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mComingPhoneNum != null && mCurDevName != null) {
-                                        comingCallback();
-                                    }
-                                }
-                            }, 200);
-                        }
-                    }
-
+//                    if (hfpStatus.equals("2")) {
+//                        if (mComingPhoneNum != null && mCurDevName != null) {
+//                            comingCallback();
+//                        } else {
+//                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if (mComingPhoneNum != null && mCurDevName != null) {
+//                                        comingCallback();
+//                                    }
+//                                }
+//                            }, 200);
+//                        }
+//                    }
+//
                     break;
                 case "5":
                     //已接电话记录
@@ -618,6 +643,7 @@ public class BluetoothPhoneHal {
     }
 
     private void dialCallback() {
+
         PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum);
         String operator = getPhoneOperatorFromDB(mDiaingPhoneNum);
         if (TextUtils.isEmpty(operator)) {

@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
@@ -25,6 +26,8 @@ import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import java.lang.reflect.Method;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -226,6 +229,13 @@ public class DialFragment extends BaseFragment implements View.OnClickListener {
     private void keyPressed(int keyCode) {
         KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
         etNumb.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void showIcon() {
+        ((MainActivity) getActivity()).showfourIcons();
+        Log.e("1111111111111","come");
+        ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(1))).setChecked(true);
     }
 
 }

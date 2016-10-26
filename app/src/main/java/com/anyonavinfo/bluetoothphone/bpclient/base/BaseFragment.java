@@ -1,5 +1,6 @@
 package com.anyonavinfo.bluetoothphone.bpclient.base;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -55,5 +56,9 @@ public  class BaseFragment extends Fragment {
 	public void backToTop() {
 		((BaseFragmentActivity) getActivity()).backToTop();
 	}
+
+	public  void showIcon(){
+		throw new Resources.NotFoundException("you must implement this method");
+	};
 	
 }

@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 public class SetFragment extends BaseFragment implements View.OnClickListener {
     private View view;
-    private SwitchButton aSwitch;
+    public SwitchButton aSwitch;
     public TextView ed_dev_name;
     private TextView ed_paring_code;
     private Button revise_dev_name;
@@ -170,7 +171,7 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
             e.printStackTrace();
         }*/
         edit.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
+        edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         builder.setView(edit);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
@@ -225,5 +226,11 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
         if (this.uiReadyListener != null) {
             this.uiReadyListener.uiIsReady();
         }
+    }
+
+    @Override
+    public void showIcon() {
+        ((MainActivity) getActivity()).showfourIcons();
+        ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(0))).setChecked(true);
     }
 }

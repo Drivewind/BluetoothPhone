@@ -88,4 +88,9 @@ public class CallerIDsFragment extends BaseFragment implements View.OnClickListe
             this.uiReadyListener.uiIsReady();
         }
     }
+
+    @Override
+    public void showIcon() {
+        ((MainActivity) getActivity()).showThreeIcons();
+    }
 }

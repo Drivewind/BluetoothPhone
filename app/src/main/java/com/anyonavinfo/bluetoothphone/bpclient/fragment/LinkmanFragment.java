@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.anyonavinfo.bluetoothphone.R;
@@ -284,6 +285,12 @@ public class LinkmanFragment extends BaseFragment {
         if (this.uiReadyListener != null) {
             this.uiReadyListener.uiIsReady();
         }
+    }
+
+    @Override
+    public void showIcon() {
+        ((MainActivity) getActivity()).showfourIcons();
+        ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(2))).setChecked(true);
     }
 
 }
