@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.adapter.SortAdapter;
@@ -27,7 +26,6 @@ import com.anyonavinfo.bluetoothphone.bpclient.custom.SideBar;
 import com.anyonavinfo.bluetoothphone.bpclient.utils.CharacterParser;
 import com.anyonavinfo.bluetoothphone.bpclient.utils.PinyinComparator;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

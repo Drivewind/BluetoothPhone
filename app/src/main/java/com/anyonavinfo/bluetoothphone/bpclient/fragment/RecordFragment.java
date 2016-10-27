@@ -12,14 +12,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.adapter.RecordAdapter;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.MyPhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
-
 import java.util.ArrayList;
 
 

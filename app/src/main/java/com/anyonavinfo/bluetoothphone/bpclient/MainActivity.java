@@ -1,10 +1,6 @@
 package com.anyonavinfo.bluetoothphone.bpclient;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -17,25 +13,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
-import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallback;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallbackImpl;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragmentActivity;
-import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.service.BluetoothPhoneService;
 import com.anyonavinfo.bluetoothphone.bpservice.utils.LogcatHelper;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.CallerIDsFragment;
@@ -44,12 +34,7 @@ import com.anyonavinfo.bluetoothphone.bpclient.fragment.DialFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.LinkmanFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.RecordFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.SetFragment;
-import com.anyonavinfo.bluetoothphone.bpservice.utils.TimeUtils;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static android.R.attr.fragment;
-import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends BaseFragmentActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 

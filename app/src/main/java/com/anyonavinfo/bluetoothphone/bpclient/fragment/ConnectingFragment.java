@@ -1,12 +1,8 @@
 package com.anyonavinfo.bluetoothphone.bpclient.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,16 +16,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
-
 import java.lang.reflect.Method;
 
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by shijj on 2016/9/12.
@@ -63,7 +56,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     private Button dis_call;
     private Button in_cancel_btn;
     private DialFragment dialFragment;
-    private FragmentTransaction transaction;
     private FragmentManager fm;
     private OnUiReady uiReadyListener;
 
@@ -292,7 +284,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     }
 
     public void setCallData(PhoneBook book) {
-        //Log.e("place", book.getPbplace());
         if (book == null) {
             return;
         }
