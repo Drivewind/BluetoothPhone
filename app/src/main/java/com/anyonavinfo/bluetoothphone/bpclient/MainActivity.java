@@ -217,7 +217,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
         });
         curFragment = setFragment;
-        //transformCallIDsFragment();根据来点显示打开
+
         transaction = fm.beginTransaction();
         transaction.add(R.id.frameLayout, setFragment, FRAGMENT_SET)
                 .add(R.id.frameLayout, dialFragment, FRAGMENT_DIAL)
