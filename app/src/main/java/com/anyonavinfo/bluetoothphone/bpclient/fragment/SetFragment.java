@@ -92,6 +92,7 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
     }
 
     public void updateDeviceState(String addr, int state) {
+        int index = 0;
         if (deviceList != null && deviceList.size() > 0) {
             if (addr == null) {
                 if (state == 0) {
@@ -100,12 +101,18 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
                     }
                 }
             } else {
-                for (DeviceBean bean : deviceList) {
-                    if (addr.equals(bean.getDeviceAddr())) {
-                        bean.setDeviceState(state);
+                for (int i = 0; i < deviceList.size(); i++) {
+                    if (addr.equals(deviceList.get(i).getDeviceAddr())) {
+                        deviceList.get(i).setDeviceState(state);
+                        index = i;
+                        break;
+
                     } else {
-                        bean.setDeviceState(0);
+                        deviceList.get(i).setDeviceState(0);
                     }
+                    DeviceBean bean = deviceList.get(index);
+                    deviceList.remove(bean);
+                    deviceList.add(0, bean);
                 }
             }
             deviceAdapter.setData(deviceList);
@@ -220,6 +227,6 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void showIcon() {
         ((MainActivity) getActivity()).showfourIcons();
-        ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(0))).setChecked(true);
+        ((RadioButton) (((MainActivity) getActivity()).rightMenu.getChildAt(0))).setChecked(true);
     }
 }
