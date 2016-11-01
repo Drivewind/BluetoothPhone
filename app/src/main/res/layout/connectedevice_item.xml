@@ -9,7 +9,7 @@
         android:layout_marginLeft="20px"
         android:layout_marginTop="20px"
         android:orientation="horizontal"
-        android:background="@drawable/itemonclick">
+        android:background="@drawable/itemclick">
 
         <ImageView
             android:id="@+id/pic_phone"
