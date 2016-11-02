@@ -35,9 +35,14 @@ public interface IBPCommand {
 
     void phoneDail(String phonenum);//拨打电话
 
+    void phoneDailDTMF(String dtmf);//拨打电话
+
     void phoneDialLast();//拨打最近电话
 
     void phoneTransfer();//语音切换
+
+    void phoneTransferToPhone();
+    void phoneTransferToBluetooth();
 
     void setVolume(int avVolume, int hfpVolume);//设置音量
 

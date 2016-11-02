@@ -199,10 +199,23 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
         phoneHal.command_transform();
     }
     ;
+    @Override
+    public  void phoneTransferToPhone(){
+        phoneHal.command_transformToPhone();
+    }
 
+    @Override
+    public   void phoneTransferToBluetooth(){
+        phoneHal.command_transformToBluethoth();
+    }
     @Override
     public void phoneDialLast() {
         phoneHal.command_dialLast();
+    }
+
+    @Override
+    public void phoneDailDTMF(String dtmf) {
+        phoneHal.command_dialDTMF(dtmf);
     }
     ;
 

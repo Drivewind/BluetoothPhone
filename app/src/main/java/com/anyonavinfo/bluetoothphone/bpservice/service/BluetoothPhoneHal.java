@@ -23,6 +23,7 @@ import com.anyonavinfo.bluetoothphone.bpservice.database.dao.PhoneDeviceDao;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
+import com.anyonavinfo.bluetoothphone.bpservice.imxserial.SerialPort;
 import com.anyonavinfo.bluetoothphone.bpservice.utils.NormalUtils;
 
 import org.w3c.dom.Text;
@@ -229,12 +230,33 @@ public class BluetoothPhoneHal {
         outputMcuCommand("D" + phoneNumber);
     }
 
+    /**
+     * 输入DTMF
+     */
+    public void command_dialDTMF(String dtmf) {
+        outputMcuCommand("DTMF" + dtmf);
+    }
+
 
     /**
      * 语音切换
      */
     public void command_transform() {
         outputMcuCommand("TRN");
+    }
+
+    /**
+     * 语音切换至手机
+     */
+    public void command_transformToPhone() {
+        outputMcuCommand("2AG");
+    }
+
+    /**
+     * 语音切换至蓝牙
+     */
+    public void command_transformToBluethoth() {
+        outputMcuCommand("2HF");
     }
 
     /**
@@ -390,7 +412,7 @@ public class BluetoothPhoneHal {
                 }, 200);
             }
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("DLID")) {
-           final String number = receivedMcu.substring(4);
+            final String number = receivedMcu.substring(4);
 
             mDiaingPhoneNum = number;
             if (mDiaingPhoneNum != null && mCurDevName != null) {
@@ -487,7 +509,6 @@ public class BluetoothPhoneHal {
                     if (hfpStatus.equals("0") || hfpStatu.equals("1")) {
                         callback.onHfpConnected();
                     } else if (hfpStatus.equals("3") || hfpStatus.equals("4")) {
-                        callback.onHangUp();
                         //未接电话记录
                         if (hfpStatus.equals("4")) {
                             if (mComingPhoneNum != null) {
@@ -553,8 +574,15 @@ public class BluetoothPhoneHal {
                 default:
                     break;
             }
-            if (hfpStatus.equals("5") && !hfpStatu.equals("5")) {
+            if ((hfpStatus.equals("5") && !hfpStatu.equals("5")) || ((hfpStatus.equals("3") || hfpStatus.equals("4")) && (hfpStatu.equals("1") || hfpStatu.equals("2")))) {
                 callback.onHangUp();
+            }
+            if (hfpStatu.equals("3") || hfpStatu.equals("4") || hfpStatu.equals("5")) {
+                int n = SerialPort.setVolumeChannelState(1);
+                Log.e("serial_port", "onVoiceConnected: state = " + n);
+            } else {
+                int n = SerialPort.setVolumeChannelState(0);
+                Log.e("serial_port", "onVoiceConnected: state = " + n);
             }
             hfpStatus = hfpStatu;
             callback.onHfpStatus(Integer.valueOf(hfpStatus));
@@ -577,6 +605,13 @@ public class BluetoothPhoneHal {
                     break;
                 default:
                     break;
+            }
+            if (a2dpStatu.equals("3") || a2dpStatu.equals("4") || a2dpStatu.equals("5")) {
+                int n = SerialPort.setVolumeChannelState(1);
+                Log.e("serial_port", "onVoiceConnected: state = " + n);
+            } else {
+                int n = SerialPort.setVolumeChannelState(0);
+                Log.e("serial_port", "onVoiceConnected: state = " + n);
             }
             a2dpStatus = a2dpStatu;
             callback.onA2dpStatus(Integer.valueOf(a2dpStatu));
@@ -606,31 +641,26 @@ public class BluetoothPhoneHal {
             String deviceAddr = receivedMcu.substring(7);
             mCurDevAddr = deviceAddr;
             callback.onCurrentDeviceAddr(mCurDevAddr);
-            final PhoneDevice device = phoneDeviceDao.queryDevice(mCurDevAddr);
             if (TextUtils.isEmpty(mCurDevName)) {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(mCurDevName)) {
-                            if (device == null) {
-                                phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                            } else {
-                                phoneDeviceDao.updateDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                            }
+                            phoneDeviceDao.deleteDevice(mCurDevAddr);
+                            phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
                         }
                     }
                 }, 200);
             } else {
-                if (device == null) {
-                    phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                } else {
-                    phoneDeviceDao.updateDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                }
+                phoneDeviceDao.deleteDevice(mCurDevAddr);
+                phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
             }
 
         } else if (receivedMcu.equals("RING")) {
             if (mComingPhoneNum != null)
                 callback.onTalking(phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum));
+        } else if(receivedMcu.equals("UPDATE")){
+            command_setVolume(12,12);
         }
     }
 

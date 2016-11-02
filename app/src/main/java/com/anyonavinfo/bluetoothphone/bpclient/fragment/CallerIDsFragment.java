@@ -69,7 +69,7 @@ public class CallerIDsFragment extends BaseFragment implements View.OnClickListe
                 ((MainActivity) getActivity()).phoneService.phoneAnswer();
                 break;
             case R.id.caller_discall:
-                ((MainActivity) getActivity()).phoneService.phoneHangUp();
+                ((MainActivity) getActivity()).phoneService.phoneReject();
                 break;
         }
 
