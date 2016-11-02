@@ -534,6 +534,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (sweetAlertDialog != null) {
                     sweetAlertDialog.cancel();
                 }
+                call_dial.setClickable(false);
+                call_mute.setClickable(false);
+                call_switch.setClickable(false);
                 break;
             case CommonData.PHONE_TALKING:
                 break;
