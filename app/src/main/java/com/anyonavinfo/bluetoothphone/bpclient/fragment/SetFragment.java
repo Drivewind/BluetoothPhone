@@ -152,15 +152,6 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
         edit.setPadding(20, 30, 10, 10);
         edit.setTextSize(25);
         edit.setSingleLine(true);
-       /* try {
-            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
-            f.setAccessible(true);
-            f.set(edit, R.color.sweet_dialog_bg_color);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }*/
         edit.setImeOptions(EditorInfo.IME_ACTION_DONE);
         edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         builder.setView(edit);

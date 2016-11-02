@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallbackImpl;
@@ -36,6 +37,7 @@ import com.anyonavinfo.bluetoothphone.bpclient.fragment.DialFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.LinkmanFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.RecordFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.fragment.SetFragment;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends BaseFragmentActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -63,17 +65,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private FragmentTransaction transaction;
     private FragmentManager fm;
     private long exitTime = 0;
-
     public Handler mHandler;
-
     public BluetoothPhoneService phoneService;
-
     private BaseFragment preFragment, curFragment;
     private boolean isFristOn;
-
-    /* public ProgressDialog progressDialog;
-     public AlertDialog.Builder builder;
-     public AlertDialog dialog;*/
     public SweetAlertDialog sweetAlertDialog;
 
 
@@ -101,6 +96,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
+            call_dial.setClickable(false);
+            call_mute.setClickable(false);
+            call_switch.setClickable(false);
             if (sweetAlertDialog != null) {
                 sweetAlertDialog.cancel();
             }
@@ -354,13 +352,13 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case R.id.rbtn_call_mute:
                 if (call_mute.isChecked()) {
-                    phoneService.setVolume(CommonData.avVolume,CommonData.hfpVolume);
+                    phoneService.setVolume(CommonData.avVolume, CommonData.hfpVolume);
                 } else {
-                    phoneService.setVolume(0,CommonData.hfpVolume);
+                    phoneService.setVolume(0, CommonData.hfpVolume);
                 }
                 break;
             case R.id.rbtn_call_switch:
-                    phoneService.phoneTransfer();
+                phoneService.phoneTransfer();
                 break;
             case R.id.ibtn_exit:
                 finish();
@@ -533,6 +531,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 toDialingFragment();
                 connectingFragment.call_connect.setText("拨号中...");
                 phoneService.phoneTransferToBluetooth();
+                if (sweetAlertDialog != null) {
+                    sweetAlertDialog.cancel();
+                }
                 break;
             case CommonData.PHONE_TALKING:
                 break;
@@ -546,6 +547,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.PHONE_CALL_SUCCESSED:
                 toTalkingFragment();
+                if (sweetAlertDialog != null) {
+                    sweetAlertDialog.cancel();
+                }
+                call_dial.setClickable(true);
+                call_mute.setClickable(true);
+                call_switch.setClickable(true);
                 break;
             case CommonData.VOICE_CONNECTED:
                 call_switch.setChecked(true);
@@ -657,23 +664,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     public void showProgressDialog() {
-       /* builder = new AlertDialog.Builder(this);
-        builder.setTitle("蓝牙电话申请访问您的通讯录");    //设置对话框标题
-        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                phoneService.phoneBookStartUpdate();
-            }
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.setCancelable(true);
-        dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();*/
         sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
         sweetAlertDialog.setTitleText("蓝牙电话请求访问您的通讯录！");
         sweetAlertDialog.setCancelText("拒绝");
@@ -682,7 +672,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sDialog) {
-                // reuse previous dialog instance, keep widget user state, reset them if you need
                 sDialog.cancel();
 
             }
