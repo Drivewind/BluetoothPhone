@@ -567,6 +567,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.PHONEBOOK_DOWNLOAD_DONE:
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
+                recordFragment.updatePhoneCallView(phoneService.getPhoneCallList(0));
                 sweetAlertDialog.cancel();
                 sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE);
                 sweetAlertDialog.setTitleText("同步完成!");

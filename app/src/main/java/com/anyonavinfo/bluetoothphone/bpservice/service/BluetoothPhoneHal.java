@@ -460,6 +460,8 @@ public class BluetoothPhoneHal {
             isStartDownloadPB = false;
             pbDownloadThread.isInterrupted();
             pbDownloadThread = null;
+            //更新通话记录
+
             callback.onPhoneBookDone();
         } else if (receivedMcu.length() >= 3 && receivedMcu.substring(0, 3).equals("PB=")) {
             int nameIndex = receivedMcu.indexOf(",") + 1;
