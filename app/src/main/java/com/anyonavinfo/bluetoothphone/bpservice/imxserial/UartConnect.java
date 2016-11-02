@@ -168,13 +168,13 @@ public class UartConnect {
                         cmdbuffer[mRxCMDcnt++] = rbuffer[i];
                         if (mRxCMDcnt > 3) {
                             if (mRxCMDcnt >= ((cmdbuffer[2]) + 6)) {
-                                int checksum = 0;
-                                for (int i = 2; i < mRxCMDcnt - 3; i++) {
-                                    checksum += cmdbuffer[i];
-                                }
-                                if (cmdbuffer[mRxCMDcnt - 3] == (checksum & 0xff)) {
+//                                int checksum = 0;
+//                                for (int i = 2; i < mRxCMDcnt - 3; i++) {
+//                                    checksum += cmdbuffer[i];
+//                                }
+//                                if (cmdbuffer[mRxCMDcnt - 3] == (checksum & 0xff)) {
                                     onDataReceiver.PutData(parseData(cmdbuffer, mRxCMDcnt));
-                                }
+//                                }
                                 mRxCMDcnt = 0;
                             }
                         }

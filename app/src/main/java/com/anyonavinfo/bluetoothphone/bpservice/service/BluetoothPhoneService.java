@@ -106,6 +106,10 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
                 phoneHal.command_getCurDeviceAddr();
                 sleep(20);
                 phoneHal.command_getDeviceName();
+                sleep(20);
+                phoneHal.command_setVolume(12,12);
+                sleep(20);
+                phoneHal.command_getVolume();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -205,8 +209,8 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     }
 
     @Override
-    public   void phoneTransferToBluetooth(){
-        phoneHal.command_transformToBluethoth();
+    public  void phoneTransferToBluetooth(){
+        phoneHal.command_transformToBluetooth();
     }
     @Override
     public void phoneDialLast() {

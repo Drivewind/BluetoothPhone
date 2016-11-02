@@ -354,13 +354,13 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case R.id.rbtn_call_mute:
                 if (call_mute.isChecked()) {
-                    phoneService.unMute();
+                    phoneService.setVolume(CommonData.avVolume,CommonData.hfpVolume);
                 } else {
-                    phoneService.mute();
+                    phoneService.setVolume(0,CommonData.hfpVolume);
                 }
                 break;
             case R.id.rbtn_call_switch:
-                phoneService.phoneTransfer();
+                    phoneService.phoneTransfer();
                 break;
             case R.id.ibtn_exit:
                 finish();
@@ -489,7 +489,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private void handlerMessage(Message msg) {
         switch (msg.what) {
             case CommonData.HFP_CONNECTED:
-                postDelayedRunnable(connectRunnable, 300);
+//                postDelayedRunnable(connectRunnable, 300);
                 break;
             case CommonData.HFP_DISCONNECTED:
                 postDelayedRunnable(new Runnable() {
@@ -556,6 +556,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.CURRENT_DEVICE_NAME:
                 break;
             case CommonData.CURRENT_DEVICE_ADDR:
+                postDelayedRunnable(connectRunnable, 300);
                 break;
             case CommonData.CURRENT_BLUETOOTH_NAME:
                 setFragment.ed_dev_name.setText(msg.getData().getString("name"));
@@ -579,10 +580,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.VOLUME:
                 break;
             case CommonData.VOLUME_MUTE:
-                call_mute.setChecked(false);
+//                call_mute.setChecked(false);
                 break;
             case CommonData.VOLUME_UNMUTE:
-                call_mute.setChecked(true);
+//                call_mute.setChecked(true);
                 break;
             case CommonData.PHONEOPERATOR_SUCCESSED:
                 if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 5) {

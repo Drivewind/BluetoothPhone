@@ -368,6 +368,7 @@ public class IBPCallbackImpl implements IBPCallback {
         sendMessage(msg);
     }
 
+
     @Override
     public void onPhoneOperatorSuccessed(String operator) {
         Log("Phone operator is get for network successfully !");

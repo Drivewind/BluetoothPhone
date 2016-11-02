@@ -255,7 +255,7 @@ public class BluetoothPhoneHal {
     /**
      * 语音切换至蓝牙
      */
-    public void command_transformToBluethoth() {
+    public void command_transformToBluetooth() {
         outputMcuCommand("2HF");
     }
 
@@ -642,7 +642,6 @@ public class BluetoothPhoneHal {
         } else if (receivedMcu.length() >= 7 && receivedMcu.substring(0, 7).equals("PHADDR=")) {
             String deviceAddr = receivedMcu.substring(7);
             mCurDevAddr = deviceAddr;
-            callback.onCurrentDeviceAddr(mCurDevAddr);
             if (TextUtils.isEmpty(mCurDevName)) {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
@@ -650,12 +649,14 @@ public class BluetoothPhoneHal {
                         if (!TextUtils.isEmpty(mCurDevName)) {
                             phoneDeviceDao.deleteDevice(mCurDevAddr);
                             phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
+                            callback.onCurrentDeviceAddr(mCurDevAddr);
                         }
                     }
                 }, 200);
             } else {
                 phoneDeviceDao.deleteDevice(mCurDevAddr);
                 phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
+                callback.onCurrentDeviceAddr(mCurDevAddr);
             }
 
         } else if (receivedMcu.equals("RING")) {

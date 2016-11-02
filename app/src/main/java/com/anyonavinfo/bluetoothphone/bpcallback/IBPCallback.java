@@ -42,7 +42,6 @@ public interface IBPCallback {
     void onAvrcpConnecting();//avrcp连接中
     void onMute();//麦克风静音已打开
     void onUnMute();//麦克风静音已关闭
-
     void onPhoneOperatorSuccessed(String operator);
 
 }
