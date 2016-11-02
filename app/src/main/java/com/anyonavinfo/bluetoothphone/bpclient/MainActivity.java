@@ -60,7 +60,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private DialFragment dialFragment;
     private ConnectingFragment connectingFragment;
     private LinkmanFragment linkmanFragment;
-    private RecordFragment recordFragment;
+    public RecordFragment recordFragment;
     private SetFragment setFragment;
     private FragmentTransaction transaction;
     private FragmentManager fm;
@@ -79,10 +79,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         Intent intent = new Intent();
         intent.setPackage("com.anyonavinfo.bluetoothphone");
         intent.setAction("android.intent.action.service.BluetoothPhoneService");
-        startService(intent);
-        bindService(intent, conn, BIND_AUTO_CREATE);
-        LogcatHelper.getInstance(this).start();
         setViews();
+        LogcatHelper.getInstance(this).start();
+        bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -140,12 +139,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
-            if (getIntent().getAction().equals("PHONE_INCOMING")) {
+   String action = getIntent().getAction();
+            if (action.equals("PHONE_INCOMING")) {
                 initFragment(4);
                 preFragment = null;
                 isFristOn = true;
-                phoneService.phoneTransferToBluetooth();
             } else if (getIntent().getAction().equals("android.intent.action.MAIN")) {
                 if (CommonData.hfpStatu <= 2) {
                     initFragment(0);
@@ -154,6 +152,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 } else if (CommonData.hfpStatu == 5) {
                     initFragment(5);
                 }
+            }
+            phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
+            if(action.equals("PHONE_INCOMING")){
+                phoneService.phoneTransferToBluetooth();
             }
             initHandler();
         }
@@ -352,9 +354,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case R.id.rbtn_call_mute:
                 if (call_mute.isChecked()) {
-                    phoneService.setVolume(CommonData.avVolume, CommonData.hfpVolume);
+//                    phoneService.setVolume(CommonData.avVolume, CommonData.hfpVolume);
+                    phoneService.unMute();
                 } else {
-                    phoneService.setVolume(0, CommonData.hfpVolume);
+//                    phoneService.setVolume(0, CommonData.hfpVolume);
+                    phoneService.mute();
                 }
                 break;
             case R.id.rbtn_call_switch:
@@ -590,10 +594,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.VOLUME:
                 break;
             case CommonData.VOLUME_MUTE:
-//                call_mute.setChecked(false);
+                call_mute.setChecked(false);
                 break;
             case CommonData.VOLUME_UNMUTE:
-//                call_mute.setChecked(true);
+                call_mute.setChecked(true);
                 break;
             case CommonData.PHONEOPERATOR_SUCCESSED:
                 if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 5) {

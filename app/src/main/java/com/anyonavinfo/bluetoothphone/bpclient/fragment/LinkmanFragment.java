@@ -116,6 +116,7 @@ public class LinkmanFragment extends BaseFragment {
                         mMyPhoneBooks.remove(adapter.getData().get(i));
                         adapter.getData().remove(i);
                     }
+                    ((MainActivity) getActivity()).recordFragment.updatePhoneCallView(((MainActivity) getActivity()).phoneService.getPhoneCallList(0));
                 }
                 btnDeleteLinkman.setText("删除（" + 0 + "）");
                 adapter.updateListView(adapter.getData());
