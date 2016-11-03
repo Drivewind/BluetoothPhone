@@ -16,11 +16,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
+
 import java.lang.reflect.Method;
 
 
@@ -29,10 +31,10 @@ import java.lang.reflect.Method;
  */
 public class ConnectingFragment extends BaseFragment implements View.OnClickListener {
     private View view;
-    public TextView call_name;
+    public TextView call_name, in_call_name, in_call_place, in_call_time;
     public TextView call_dist;
     public TextView call_connect;
-    public TextView call_time;
+    //    public TextView call_time;
     private RelativeLayout call_status_name;
     private RelativeLayout call_status_place;
     private LinearLayout in_call;
@@ -55,8 +57,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     private ImageButton dialj;
     private Button dis_call;
     private Button in_cancel_btn;
-    private DialFragment dialFragment;
-    private FragmentManager fm;
     private OnUiReady uiReadyListener;
 
 
@@ -126,7 +126,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         dis_call = (Button) view.findViewById(R.id.R_btnCall);
         call_name = (TextView) view.findViewById(R.id.R_name);
         call_dist = (TextView) view.findViewById(R.id.R_dist);
-        call_time = (TextView) view.findViewById(R.id.connect_time);
+//        call_time = (TextView) view.findViewById(R.id.connect_time);
 
         ibtnDeleteNumb = (ImageButton) view.findViewById(R.id.ibtn_delete_numb);
 
@@ -154,8 +154,9 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         cancel_call = (RelativeLayout) view.findViewById(R.id.cancel_call);
         in_cancel_btn = (Button) view.findViewById(R.id.in_cancel_btn);
 
-        fm = getFragmentManager();
-        dialFragment = new DialFragment();
+        in_call_name = (TextView) view.findViewById(R.id.in_call_name);
+        in_call_place = (TextView) view.findViewById(R.id.in_call_place);
+        in_call_time = (TextView) view.findViewById(R.id.in_call_time);
 
     }
 
@@ -175,7 +176,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         in_call.setVisibility(View.VISIBLE);
         call_status_place.setVisibility(View.GONE);
         in_call_keyboard.setVisibility(View.VISIBLE);
-        call_time.setVisibility(View.VISIBLE);
         cancel_call.setVisibility(View.GONE);
         in_cancel_btn.setVisibility(View.VISIBLE);
     }
@@ -191,7 +191,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         call_connect.setVisibility(View.VISIBLE);
         cancel_call.setVisibility(View.VISIBLE);
         in_cancel_btn.setVisibility(View.GONE);
-        call_time.setVisibility(View.GONE);
     }
 
     @Override
@@ -241,6 +240,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
                 break;
             case R.id.in_cancel_btn:
                 etNumb.setText("");
+                ((MainActivity) getActivity()).phoneService.phoneHangUp();
                 break;
         }
     }
@@ -248,6 +248,15 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     private void keyPressed(int keyCode) {
         KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
         etNumb.onKeyDown(keyCode, event);
+        String code = "1";
+        if (keyCode <= 16) {
+            code = (keyCode - 7) + "";
+        } else if (keyCode == 17) {
+            code = "*";
+        } else if (keyCode == 18) {
+            code = "#";
+        }
+        ((MainActivity) getActivity()).phoneService.phoneDailDTMF(code);
     }
 
 
@@ -289,11 +298,14 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         }
         if (book.getPbname().equals("陌生号码")) {
             call_name.setText(book.getPbnumber());
+            in_call_name.setText(book.getPbnumber());
         } else {
             call_name.setText(book.getPbname());
+            in_call_name.setText(book.getPbname());
         }
 
         call_dist.setText(book.getPbplace());
+        in_call_place.setText(book.getPbplace());
         if (CommonData.hfpStatu == 3) {
             call_connect.setText("拨号中");
         }

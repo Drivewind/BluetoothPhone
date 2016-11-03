@@ -139,12 +139,15 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-   String action = getIntent().getAction();
+            Log.e("11111111", "onServiceConnected: 1111111111" );
+            String action = getIntent().getAction();
             if (action.equals("PHONE_INCOMING")) {
+                Log.e("11111111", "onServiceConnected: 2222222222" );
                 initFragment(4);
                 preFragment = null;
                 isFristOn = true;
             } else if (getIntent().getAction().equals("android.intent.action.MAIN")) {
+                Log.e("11111111", "onServiceConnected: 333333333" );
                 if (CommonData.hfpStatu <= 2) {
                     initFragment(0);
                 } else if (CommonData.hfpStatu == 3) {
@@ -153,11 +156,14 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     initFragment(5);
                 }
             }
+            Log.e("11111111", "onServiceConnected: 444444444" );
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
-            if(action.equals("PHONE_INCOMING")){
+            if (action.equals("PHONE_INCOMING")) {
                 phoneService.phoneTransferToBluetooth();
             }
+            Log.e("11111111", "onServiceConnected: 55555555555" );
             initHandler();
+            Log.e("11111111", "onServiceConnected: 66666666666" );
         }
 
         @Override
@@ -247,7 +253,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             transaction.show(connectingFragment);
             showThreeIcons();
         }
-        transaction.commitAllowingStateLoss();
+        transaction.commit();
     }
 
     private void setViews() {
@@ -291,7 +297,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
         }
         ft.show(fm.findFragmentByTag(tag)).commitAllowingStateLoss();
-
     }
 
     @Override
@@ -376,9 +381,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         switch (buttonView.getId()) {
             case R.id.rbtn_call_dial:
                 if (isChecked) {
-                    //connectingFragment.showCallLayoutIn();
+                    connectingFragment.showCallLayoutIn();
                 } else {
-                    //connectingFragment.showCallLayoutOut();
+                    connectingFragment.showCallLayoutOut();
                 }
                 break;
             case R.id.rbtn_call_mute:
@@ -629,7 +634,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
                 sb.append(sec);
                 connectingFragment.call_connect.setText(sb.toString());
-                //connectingFragment.call_time.setText(sb.toString());
+                connectingFragment.in_call_time.setText(sb.toString());
                 break;
             case 0x3001:
                 recordFragment.btnRecordDelete.setText("删除（" + msg.arg1 + "）");

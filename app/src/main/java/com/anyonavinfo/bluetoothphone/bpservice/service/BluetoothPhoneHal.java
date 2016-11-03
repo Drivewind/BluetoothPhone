@@ -428,7 +428,6 @@ public class BluetoothPhoneHal {
             pbDownloadThread.isInterrupted();
             pbDownloadThread = null;
             //更新通话记录
-
             callback.onPhoneBookDone();
         } else if (receivedMcu.length() >= 3 && receivedMcu.substring(0, 3).equals("PB=")) {
             int nameIndex = receivedMcu.indexOf(",") + 1;
@@ -445,7 +444,6 @@ public class BluetoothPhoneHal {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-
             } else {
                 return;
             }
@@ -480,12 +478,7 @@ public class BluetoothPhoneHal {
                     } else if (hfpStatus.equals("3") || hfpStatus.equals("4")) {
                         //未接电话记录
                         if (hfpStatus.equals("4")) {
-                            if (mComingPhoneNum != null) {
-                                String callName = phoneBookDao.queryPhoneName(mCurDevAddr, mComingPhoneNum);
-                                PhoneCall call = new PhoneCall(mCurDevAddr, callName, mComingPhoneNum, 2, getPhoneOperatorFromDB(mComingPhoneNum));
-                                phoneCallDao.insertPhoneCall(call);
-                                callback.onCalllog(call);
-                            }
+                            postRunnable(comeLogRunnable);
                         }
                     }
                     phoneStateReset();
@@ -493,31 +486,20 @@ public class BluetoothPhoneHal {
                     break;
                 case "3":
                     if (hfpStatus.equals("2")) {
-                        callCount = 0;
-                        mHandler.postDelayed(dialRunnable, 100);
+                        postRunnable(dialRunnable);
                     }
                     break;
                 case "4":
                     if (hfpStatus.equals("2")) {
-                        callCount=0;
-                        mHandler.postDelayed(comeRunnable,100);
+                        postRunnable(comeRunnable);
                     }
-
                     break;
                 case "5":
                     //已接电话记录
                     if (hfpStatus.equals("4")) {
-                        if (mComingPhoneNum != null && mCurDevAddr != null) {
-                            PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum);
-                            PhoneCall call = new PhoneCall(mCurDevAddr, book.getPbname(), mComingPhoneNum, 1, getPhoneOperatorFromDB(mComingPhoneNum));
-                            phoneCallDao.insertPhoneCall(call);
-                            callback.onCalllog(call);
-                            callback.onCallSuccessed(book);
-                        }
+                        postRunnable(comeSuccessRunnable);
                     } else if (hfpStatus.equals("3")) {
-                        if (mDiaingPhoneNum != null && mCurDevAddr != null) {
-                            callback.onCallSuccessed(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
-                        }
+                        postRunnable(dialSuccessRunnable);
                     }
                     break;
                 default:
@@ -589,23 +571,7 @@ public class BluetoothPhoneHal {
         } else if (receivedMcu.length() >= 7 && receivedMcu.substring(0, 7).equals("PHADDR=")) {
             String deviceAddr = receivedMcu.substring(7);
             mCurDevAddr = deviceAddr;
-            if (TextUtils.isEmpty(mCurDevName)) {
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!TextUtils.isEmpty(mCurDevName)) {
-                            phoneDeviceDao.deleteDevice(mCurDevAddr);
-                            phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                            callback.onCurrentDeviceAddr(mCurDevAddr);
-                        }
-                    }
-                }, 200);
-            } else {
-                phoneDeviceDao.deleteDevice(mCurDevAddr);
-                phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
-                callback.onCurrentDeviceAddr(mCurDevAddr);
-            }
-
+            postRunnable(paddrRunnable);
         } else if (receivedMcu.equals("RING")) {
             if (mComingPhoneNum != null)
                 callback.onTalking(phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum));
@@ -613,6 +579,8 @@ public class BluetoothPhoneHal {
             command_setVolume(12, 12);
         }
     }
+
+
 
     private String getPhoneOperatorFromDB(String number) {
         String operator = phoneBookDao.queryPhonePlace(mCurDevAddr, number);
@@ -623,6 +591,10 @@ public class BluetoothPhoneHal {
     }
 
     private int callCount;
+    private void postRunnable(Runnable runnable) {
+        callCount = 0;
+        mHandler.post(runnable);
+    }
     private Runnable dialRunnable = new Runnable() {
         @Override
         public void run() {
@@ -632,10 +604,10 @@ public class BluetoothPhoneHal {
                 phoneCallDao.insertPhoneCall(call);
                 callback.onCalllog(call);
                 dialCallback();
-                callCount=0;
+                callCount = 0;
             } else {
-                if (callCount <= 15) {
-                    mHandler.postDelayed(dialRunnable, 200);
+                if (callCount <= 60) {
+                    mHandler.postDelayed(dialRunnable, 50);
                     callCount++;
                 } else {
                     callCount = 0;
@@ -646,12 +618,37 @@ public class BluetoothPhoneHal {
     private Runnable dialSuccessRunnable = new Runnable() {
         @Override
         public void run() {
-
+            if (mDiaingPhoneNum != null && mCurDevAddr != null) {
+                callback.onCallSuccessed(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
+                callCount = 0;
+            } else {
+                if (callCount <= 60) {
+                    mHandler.postDelayed(dialSuccessRunnable, 50);
+                    callCount++;
+                }else {
+                    callCount=0;
+                }
+            }
         }
     };
     private Runnable comeSuccessRunnable = new Runnable() {
         @Override
         public void run() {
+            if (mComingPhoneNum != null && mCurDevAddr != null) {
+                PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mComingPhoneNum);
+                PhoneCall call = new PhoneCall(mCurDevAddr, book.getPbname(), mComingPhoneNum, 1, getPhoneOperatorFromDB(mComingPhoneNum));
+                phoneCallDao.insertPhoneCall(call);
+                callback.onCalllog(call);
+                callback.onCallSuccessed(book);
+                callCount = 0;
+            } else {
+                if (callCount <= 60) {
+                    mHandler.postDelayed(comeSuccessRunnable, 50);
+                    callCount++;
+                } else {
+                    callCount = 0;
+                }
+            }
 
         }
     };
@@ -661,10 +658,48 @@ public class BluetoothPhoneHal {
         public void run() {
             if (mComingPhoneNum != null && mCurDevName != null) {
                 comingCallback();
-                callCount=0;
+                callCount = 0;
             } else {
-                if (callCount <= 15) {
-                    mHandler.postDelayed(comeRunnable, 200);
+                if (callCount <= 60) {
+                    mHandler.postDelayed(comeRunnable, 50);
+                    callCount++;
+                } else {
+                    callCount = 0;
+                }
+            }
+        }
+    };
+
+    private Runnable comeLogRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mComingPhoneNum != null && mCurDevAddr != null) {
+                String callName = phoneBookDao.queryPhoneName(mCurDevAddr, mComingPhoneNum);
+                PhoneCall call = new PhoneCall(mCurDevAddr, callName, mComingPhoneNum, 2, getPhoneOperatorFromDB(mComingPhoneNum));
+                phoneCallDao.insertPhoneCall(call);
+                callback.onCalllog(call);
+                callCount = 0;
+            } else {
+                if (callCount <= 60) {
+                    mHandler.postDelayed(comeLogRunnable, 50);
+                    callCount++;
+                } else {
+                    callCount = 0;
+                }
+            }
+        }
+    };
+
+    private Runnable paddrRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!TextUtils.isEmpty(mCurDevName)) {
+                phoneDeviceDao.deleteDevice(mCurDevAddr);
+                phoneDeviceDao.insertDevice(new PhoneDevice(mCurDevAddr, mCurDevName));
+                callback.onCurrentDeviceAddr(mCurDevAddr);
+            } else {
+                if (callCount <= 60) {
+                    mHandler.postDelayed(paddrRunnable, 50);
                     callCount++;
                 } else {
                     callCount = 0;

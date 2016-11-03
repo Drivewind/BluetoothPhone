@@ -280,7 +280,7 @@ public class IBPCallbackImpl implements IBPCallback {
     public void onVolume(int avVolume, int hfpVolume) {
         Log("Hfp Volume is " + hfpVolume + " A2dp Volume is " + avVolume);
         CommonData.avVolume = avVolume;
-        CommonData.hfpStatu = hfpVolume;
+        CommonData.hfpVolume = hfpVolume;
         Message msg = new Message();
         msg.what = CommonData.VOLUME;
         msg.arg1 = avVolume;
