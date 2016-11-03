@@ -110,7 +110,7 @@ public class LinkmanFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 /**准备执行删除功能*/
-                for (int i = adapter.getData().size() - 1; i >= 0; i--) {
+                for (int i = adapter.getData().size() - 1; i > 0; i--) {
                     if (adapter.getData().get(i).isChecked()) {
                         ((MainActivity) getActivity()).phoneService.deletePhoneBook(adapter.getData().get(i).getPbnumber());
                         mMyPhoneBooks.remove(adapter.getData().get(i));
