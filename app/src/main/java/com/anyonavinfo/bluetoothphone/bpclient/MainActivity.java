@@ -139,7 +139,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-   String action = getIntent().getAction();
+            String action = getIntent().getAction();
             if (action.equals("PHONE_INCOMING")) {
                 initFragment(4);
                 preFragment = null;
@@ -154,7 +154,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
             }
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
-            if(action.equals("PHONE_INCOMING")){
+            if (action.equals("PHONE_INCOMING")) {
                 phoneService.phoneTransferToBluetooth();
             }
             initHandler();
