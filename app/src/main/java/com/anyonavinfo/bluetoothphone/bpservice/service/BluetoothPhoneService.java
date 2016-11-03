@@ -107,7 +107,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
                 sleep(20);
                 phoneHal.command_getDeviceName();
                 sleep(20);
-                phoneHal.command_setVolume(12,12);
+                phoneHal.command_setVolume(15,15);
                 sleep(20);
                 phoneHal.command_getVolume();
             } catch (InterruptedException e) {

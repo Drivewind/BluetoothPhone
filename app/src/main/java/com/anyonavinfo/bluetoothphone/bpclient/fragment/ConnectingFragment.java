@@ -41,7 +41,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     private RelativeLayout in_call_keyboard;
     private RelativeLayout ring_call;
     private RelativeLayout cancel_call;
-    private EditText etNumb;
+    public EditText etNumb;
     private ImageButton ibtnDeleteNumb;
     private ImageButton dialNum1;
     private ImageButton dialNum2;

@@ -9,7 +9,7 @@ public class PhoneCall {
     private String callNumber;
     private String callTime;
     private String callPlace;
-    private int callType;//1 receivedcall,2 missedcall,3 dialedcall
+    private int callType;//1 拨打未通,2 拨打成功,3 未接、拒接 4 接听成功
 
     public String getCallNumber() {
         return callNumber;

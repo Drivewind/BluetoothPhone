@@ -68,7 +68,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public Handler mHandler;
     public BluetoothPhoneService phoneService;
     private BaseFragment preFragment, curFragment;
-    private boolean isFristOn;
+    private boolean isFristOn,isReStart;
     public SweetAlertDialog sweetAlertDialog;
 
 
@@ -92,6 +92,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     private void handlerNewIntent(Intent intent) {
         if (intent.getAction().equals("PHONE_INCOMING")) {
+            isReStart=true;
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
@@ -139,15 +140,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("11111111", "onServiceConnected: 1111111111" );
             String action = getIntent().getAction();
             if (action.equals("PHONE_INCOMING")) {
-                Log.e("11111111", "onServiceConnected: 2222222222" );
                 initFragment(4);
                 preFragment = null;
                 isFristOn = true;
             } else if (getIntent().getAction().equals("android.intent.action.MAIN")) {
-                Log.e("11111111", "onServiceConnected: 333333333" );
                 if (CommonData.hfpStatu <= 2) {
                     initFragment(0);
                 } else if (CommonData.hfpStatu == 3) {
@@ -156,14 +154,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     initFragment(5);
                 }
             }
-            Log.e("11111111", "onServiceConnected: 444444444" );
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
             if (action.equals("PHONE_INCOMING")) {
                 phoneService.phoneTransferToBluetooth();
             }
-            Log.e("11111111", "onServiceConnected: 55555555555" );
             initHandler();
-            Log.e("11111111", "onServiceConnected: 66666666666" );
         }
 
         @Override
@@ -553,6 +548,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (preFragment == null || isFristOn) {
                     finish();
                 } else {
+                    connectingFragment.etNumb.setText("");
                     toFragment(preFragment.getTag());
                     curFragment.showIcon();
                 }
