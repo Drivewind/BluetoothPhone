@@ -238,9 +238,6 @@ public class BluetoothPhoneHal {
         outputMcuCommand("DTMF" + dtmf);
     }
 
-
-
-
     /**
      * 语音切换
      */
