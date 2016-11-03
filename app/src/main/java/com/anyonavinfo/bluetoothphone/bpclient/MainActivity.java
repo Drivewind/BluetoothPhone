@@ -291,7 +291,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
         }
         ft.show(fm.findFragmentByTag(tag)).commitAllowingStateLoss();
-
     }
 
     @Override
