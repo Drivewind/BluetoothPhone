@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
 import com.anyonavinfo.bluetoothphone.bpclient.adapter.SortAdapter;
@@ -26,6 +27,7 @@ import com.anyonavinfo.bluetoothphone.bpclient.custom.SideBar;
 import com.anyonavinfo.bluetoothphone.bpclient.utils.CharacterParser;
 import com.anyonavinfo.bluetoothphone.bpclient.utils.PinyinComparator;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +86,7 @@ public class LinkmanFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //当输入框里面的值为空，更新为原来的列表，否则为过滤数据列表
                 filterData(s.toString());
-                Log.i("周志安","onTextChanged");
+                Log.i("周志安", "onTextChanged");
             }
 
             @Override
@@ -110,7 +112,7 @@ public class LinkmanFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 /**准备执行删除功能*/
-                for (int i = adapter.getData().size() - 1; i > 0; i--) {
+                for (int i = adapter.getData().size() - 1; i >= 0; i--) {
                     if (adapter.getData().get(i).isChecked()) {
                         ((MainActivity) getActivity()).phoneService.deletePhoneBook(adapter.getData().get(i).getPbnumber());
                         mMyPhoneBooks.remove(adapter.getData().get(i));
@@ -187,11 +189,13 @@ public class LinkmanFragment extends BaseFragment {
     }
 
     public void updatePhoneBookView(ArrayList<PhoneBook> callList) {
-        mMyPhoneBooks=wrapPhoneBookList(callList);
+        mMyPhoneBooks = wrapPhoneBookList(callList);
         adapter.updateListView(mMyPhoneBooks);
     }
 
-    /** 电话本转换对象集合 并排序*/
+    /**
+     * 电话本转换对象集合 并排序
+     */
     private ArrayList<MyPhoneBook> wrapPhoneBookList(ArrayList<PhoneBook> callList) {
         ArrayList<MyPhoneBook> phoneCalls = null;
         if (callList != null) {
@@ -199,14 +203,14 @@ public class LinkmanFragment extends BaseFragment {
             for (PhoneBook call : callList) {
                 MyPhoneBook myCall = new MyPhoneBook(call);
                 //获取姓名准备转换首字母，
-                String pbName=myCall.getPbname();
-                CharacterParser characterParser=CharacterParser.getInstance();
+                String pbName = myCall.getPbname();
+                CharacterParser characterParser = CharacterParser.getInstance();
                 String pinyin = characterParser.getSelling(pbName);
                 String sortString = pinyin.substring(0, 1).toUpperCase();
                 // 正则表达式，判断首字母是否是英文字母
-                if(sortString.matches("[A-Z]")){
+                if (sortString.matches("[A-Z]")) {
                     myCall.setSortLetters(sortString.toUpperCase());
-                }else{
+                } else {
                     myCall.setSortLetters("#");
                 }
                 myCall.setChecked(false);
@@ -218,27 +222,29 @@ public class LinkmanFragment extends BaseFragment {
         return phoneCalls;
     }
 
-    /** 筛选动作*/
+    /**
+     * 筛选动作
+     */
     private void filterData(String s) {
         List<MyPhoneBook> filterDateList = new ArrayList<MyPhoneBook>();
 
-        Log.i("周志安","myPhoneBooks="+mMyPhoneBooks.size());
-        if(TextUtils.isEmpty(s)){
+        Log.i("周志安", "myPhoneBooks=" + mMyPhoneBooks.size());
+        if (TextUtils.isEmpty(s)) {
             filterDateList = mMyPhoneBooks;
-            Log.i("周志安","TextUtils.isEmpty(s)="+s+mMyPhoneBooks.size());
-        }else{
-            Log.i("周志安","TextUtils.isEmpty(s)="+s);
+            Log.i("周志安", "TextUtils.isEmpty(s)=" + s + mMyPhoneBooks.size());
+        } else {
+            Log.i("周志安", "TextUtils.isEmpty(s)=" + s);
             filterDateList.clear();
-            Log.i("周志安","filterDateList.clear()="+mMyPhoneBooks.size());
-            for(MyPhoneBook myPhoneBook : mMyPhoneBooks){
+            Log.i("周志安", "filterDateList.clear()=" + mMyPhoneBooks.size());
+            for (MyPhoneBook myPhoneBook : mMyPhoneBooks) {
                 //后续要把号码也拼接上，统一搜索
-                String name = myPhoneBook.getPbname()+myPhoneBook.getPbnumber();
-                if(name.indexOf(s.toString()) != -1
-                        || characterParser.getSelling(name).startsWith(s.toString())){
+                String name = myPhoneBook.getPbname() + myPhoneBook.getPbnumber();
+                if (name.indexOf(s.toString()) != -1
+                        || characterParser.getSelling(name).startsWith(s.toString())) {
                     filterDateList.add(myPhoneBook);
                 }
             }
-            Log.i("周志安","filterDateList.siza()="+filterDateList.size());
+            Log.i("周志安", "filterDateList.siza()=" + filterDateList.size());
         }
         // 根据a-z进行排序
         Collections.sort(filterDateList, pinyinComparator);
@@ -289,7 +295,7 @@ public class LinkmanFragment extends BaseFragment {
     @Override
     public void showIcon() {
         ((MainActivity) getActivity()).showfourIcons();
-        ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(2))).setChecked(true);
+        ((RadioButton) (((MainActivity) getActivity()).rightMenu.getChildAt(2))).setChecked(true);
     }
 
 }
