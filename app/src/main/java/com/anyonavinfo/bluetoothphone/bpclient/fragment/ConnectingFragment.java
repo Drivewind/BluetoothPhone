@@ -318,5 +318,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         } else {
             ((MainActivity) getActivity()).showThreeIcons();
         }
+
+
     }
 }

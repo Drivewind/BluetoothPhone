@@ -286,6 +286,8 @@ public class IBPCallbackImpl implements IBPCallback {
         msg.arg1 = avVolume;
         msg.arg2 = hfpVolume;
         sendMessage(msg);
+
+
     }
 
     @Override

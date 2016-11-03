@@ -645,6 +645,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             default:
                 break;
 
+
+
         }
 
     }
