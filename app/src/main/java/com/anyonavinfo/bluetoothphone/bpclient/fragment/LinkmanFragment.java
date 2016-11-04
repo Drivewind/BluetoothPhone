@@ -190,7 +190,8 @@ public class LinkmanFragment extends BaseFragment {
 
     public void updatePhoneBookView(ArrayList<PhoneBook> callList) {
         mMyPhoneBooks = wrapPhoneBookList(callList);
-        adapter.updateListView(mMyPhoneBooks);
+        //adapter.updateListView(mMyPhoneBooks);
+        adapter.updateListView(wrapPhoneBookList(callList));
     }
 
     /**

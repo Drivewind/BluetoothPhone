@@ -37,7 +37,8 @@ import static android.content.ContentValues.TAG;
  */
 public class ConnectingFragment extends BaseFragment implements View.OnClickListener {
     private View view;
-    public TextView call_name, in_call_name, in_call_place, in_call_time;
+    public TextView call_name, in_call_name, /*in_call_place, */
+            in_call_time;
     public TextView call_dist;
     public TextView call_connect;
     //    public TextView call_time;
@@ -177,7 +178,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         in_cancel_btn = (Button) view.findViewById(R.id.in_cancel_btn);
 
         in_call_name = (TextView) view.findViewById(R.id.in_call_name);
-        in_call_place = (TextView) view.findViewById(R.id.in_call_place);
+        //in_call_place = (TextView) view.findViewById(in_call_place);
         in_call_time = (TextView) view.findViewById(R.id.in_call_time);
 
     }
@@ -338,9 +339,9 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
             call_name.setText(book.getPbname());
             in_call_name.setText(book.getPbname());
         }
-
+        Log.e("place", book.getPbplace());
         call_dist.setText(book.getPbplace());
-        in_call_place.setText(book.getPbplace());
+        //in_call_place.setText(book.getPbplace());
         if (CommonData.hfpStatu == 3) {
             call_connect.setText("拨号中");
         }

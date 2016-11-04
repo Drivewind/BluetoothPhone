@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#000">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/call_status_name"
@@ -55,29 +54,31 @@
             android:id="@+id/in_call_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.6"
+            android:layout_weight="1.5"
             android:ellipsize="end"
             android:enabled="false"
             android:singleLine="true"
+            android:text="15221619346"
             android:textColor="#f4f4f4"
-            android:textSize="30px" />
+            android:textSize="34px" />
 
-        <TextView
-            android:id="@+id/in_call_place"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:enabled="false"
-            android:singleLine="true"
-            android:textColor="#f4f4f4"
-            android:textSize="28px" />
+        <!-- <TextView
+             android:id="@+id/in_call_place"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_weight="1"
+             android:ellipsize="end"
+             android:enabled="false"
+             android:singleLine="true"
+             android:textColor="#f4f4f4"
+             android:textSize="28px" />-->
 
         <TextView
             android:id="@+id/in_call_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="00:00:00"
             android:textColor="#f4f4f4"
             android:textSize="28px" />
 
@@ -295,15 +296,15 @@
             android:textColor="#f4f4f4"
             android:textSize="50px" />
 
-       <!-- <TextView
-            android:id="@+id/connect_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="00:00"
-            android:textColor="#f4f4f4"
-            android:textSize="38px"
-            android:visibility="gone" />-->
+        <!-- <TextView
+             android:id="@+id/connect_time"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerInParent="true"
+             android:text="00:00"
+             android:textColor="#f4f4f4"
+             android:textSize="38px"
+             android:visibility="gone" />-->
 
     </RelativeLayout>
 
