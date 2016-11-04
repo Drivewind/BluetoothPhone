@@ -239,7 +239,7 @@ public class UartConnect {
                     if (!TextUtils.isEmpty(command)) {
                         SendData(command);
                     }
-                    Thread.sleep(30);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     Log.d(TAG, "SentQueneThread is interrupted !");
