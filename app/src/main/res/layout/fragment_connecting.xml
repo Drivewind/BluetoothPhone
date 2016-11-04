@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#000">
 
     <RelativeLayout
         android:id="@+id/call_status_name"
@@ -54,13 +55,12 @@
             android:id="@+id/in_call_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.6"
             android:ellipsize="end"
             android:enabled="false"
             android:singleLine="true"
-            android:text="李工"
             android:textColor="#f4f4f4"
-            android:textSize="42px" />
+            android:textSize="30px" />
 
         <TextView
             android:id="@+id/in_call_place"
@@ -70,7 +70,6 @@
             android:ellipsize="end"
             android:enabled="false"
             android:singleLine="true"
-            android:text="广西柳州"
             android:textColor="#f4f4f4"
             android:textSize="28px" />
 
@@ -79,7 +78,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="00:00:00"
             android:textColor="#f4f4f4"
             android:textSize="28px" />
 
@@ -297,7 +295,7 @@
             android:textColor="#f4f4f4"
             android:textSize="50px" />
 
-        <TextView
+       <!-- <TextView
             android:id="@+id/connect_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -305,7 +303,7 @@
             android:text="00:00"
             android:textColor="#f4f4f4"
             android:textSize="38px"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
 
     </RelativeLayout>
 
