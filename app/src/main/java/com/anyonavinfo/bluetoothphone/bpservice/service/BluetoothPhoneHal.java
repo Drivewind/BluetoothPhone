@@ -86,8 +86,8 @@ public class BluetoothPhoneHal {
         audioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
         audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
             @Override
-            public void onAudioFocusChange(int i) {
-                if (i == AudioManager.AUDIOFOCUS_LOSS) {
+            public void onAudioFocusChange(int focusState) {
+                if (focusState == AudioManager.AUDIOFOCUS_LOSS) {
                     abandonAduioFocus();
                     requestAudioFocus();
                 }
@@ -409,10 +409,14 @@ public class BluetoothPhoneHal {
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("SCO=")) {
             String scoStatu = receivedMcu.substring(4);
             if (scoStatu.equals("0")) {
-                callback.onVoiceDisconnected();
+                if (hfpStatus.equals("5")) {
+                    callback.onVoiceDisconnected();
+                }
                 abandonAduioFocus();
             } else if (scoStatu.equals("1")) {
-                callback.onVoiceConnected();
+                if (hfpStatus.equals("5")) {
+                    callback.onVoiceConnected();
+                }
                 requestAudioFocus();
             }
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("NAME=")) {
@@ -502,7 +506,12 @@ public class BluetoothPhoneHal {
                         callback.onHfpConnected();
                     }
                     updateCallLog();
-                    command_getCurDeviceName();
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            command_getCurDeviceName();
+                        }
+                    },2000);
                     break;
                 case "3":
                     if (hfpStatus.equals("2")) {
@@ -530,13 +539,11 @@ public class BluetoothPhoneHal {
                 callback.onHangUp();
             }
             if (hfpStatu.equals("3") || hfpStatu.equals("4") || hfpStatu.equals("5")) {
-                int n = SerialPort.setVolumeChannelState(1);
-                Log.e("serial_port", "onVoiceConnected: state = " + n);
                 requestAudioFocus();
             } else {
-                int n = SerialPort.setVolumeChannelState(0);
-                Log.e("serial_port", "onVoiceConnected: state = " + n);
-                abandonAduioFocus();
+                if (!a2dpStatus.equals("3")) {
+                    abandonAduioFocus();
+                }
             }
             hfpStatus = hfpStatu;
             callback.onHfpStatus(Integer.valueOf(hfpStatus));
@@ -560,11 +567,12 @@ public class BluetoothPhoneHal {
                 default:
                     break;
             }
-            if (a2dpStatu.equals("3") || a2dpStatu.equals("4") || a2dpStatu.equals("5")) {
+            if (a2dpStatu.equals("3")) {
                 requestAudioFocus();
             } else {
-
-                abandonAduioFocus();
+                if (hfpStatus.equals("0") || hfpStatus.equals("1") || hfpStatus.equals("2")) {
+                    abandonAduioFocus();
+                }
             }
             a2dpStatus = a2dpStatu;
             callback.onA2dpStatus(Integer.valueOf(a2dpStatu));
@@ -613,7 +621,7 @@ public class BluetoothPhoneHal {
     private void abandonAduioFocus() {
         audioManager.abandonAudioFocus(audioFocusChangeListener);
         int n = SerialPort.setVolumeChannelState(0);
-        Log.e("serial_port", "onVoiceConnected: state = " + n);
+        Log.e("serial_port", "onVoiceDisConnected: state = " + n);
     }
 
     private void updateCallLog() {
@@ -741,6 +749,7 @@ public class BluetoothPhoneHal {
             }
         }
     };
+
 
     private void dialCallback() {
         PhoneBook book = phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum);

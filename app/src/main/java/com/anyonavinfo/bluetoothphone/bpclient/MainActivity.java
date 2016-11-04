@@ -80,6 +80,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         intent.setAction("android.intent.action.service.BluetoothPhoneService");
         setViews();
         LogcatHelper.getInstance(this).start();
+        startService(intent);
         bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
@@ -88,6 +89,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         super.onNewIntent(intent);
         handlerNewIntent(intent);
     }
+
+
 
     private void handlerNewIntent(Intent intent) {
         if (intent.getAction().equals("PHONE_INCOMING")) {
@@ -298,10 +301,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-    }
 
     private void toTalkingFragment() {
         if (!curFragment.equals(connectingFragment)) {
@@ -451,6 +451,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         LogcatHelper.getInstance(this).stop();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     /**
      * 物理键退出APP
      */
@@ -547,10 +552,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (preFragment == null || isFristOn) {
                     finish();
                 } else {
+                    isFristOn = false;
                     connectingFragment.etNumb.setText("");
                     toFragment(preFragment.getTag());
                     curFragment.showIcon();
                 }
+                isFristOn = false;
                 break;
             case CommonData.PHONE_CALL_SUCCESSED:
                 toTalkingFragment();
