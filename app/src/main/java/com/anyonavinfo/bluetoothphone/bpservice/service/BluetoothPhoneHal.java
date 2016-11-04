@@ -1,7 +1,9 @@
 package com.anyonavinfo.bluetoothphone.bpservice.service;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +33,14 @@ import org.w3c.dom.Text;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import static android.media.AudioManager.AUDIOFOCUS_GAIN;
+import static android.media.AudioManager.STREAM_ALARM;
+import static android.media.AudioManager.STREAM_MUSIC;
+import static android.media.AudioManager.STREAM_RING;
+import static android.media.AudioManager.STREAM_SYSTEM;
+import static android.media.AudioManager.STREAM_VOICE_CALL;
+import static android.media.AudioManager.STREAM_NOTIFICATION;
+
 /**
  * Created by Drive on 2016/8/26.
  */
@@ -56,6 +66,10 @@ public class BluetoothPhoneHal {
 
     private PBDownloadThread pbDownloadThread;
 
+    private AudioManager audioManager;
+    private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener;
+    private int[] streamTypes = {STREAM_ALARM, STREAM_MUSIC, STREAM_RING, STREAM_NOTIFICATION, STREAM_SYSTEM, STREAM_VOICE_CALL};
+
 
     private OnMcuOutput onMcuOutput;
     private IBPCallback callback;
@@ -69,6 +83,16 @@ public class BluetoothPhoneHal {
         phoneDeviceDao = PhoneDeviceDao.getInstance(context);
         this.mContext = context;
         callback = IBPCallbackImpl.getCallback(context);
+        audioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
+        audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int i) {
+                if (i == AudioManager.AUDIOFOCUS_LOSS) {
+                    abandonAduioFocus();
+                    requestAudioFocus();
+                }
+            }
+        };
     }
 
 
@@ -386,8 +410,10 @@ public class BluetoothPhoneHal {
             String scoStatu = receivedMcu.substring(4);
             if (scoStatu.equals("0")) {
                 callback.onVoiceDisconnected();
+                abandonAduioFocus();
             } else if (scoStatu.equals("1")) {
                 callback.onVoiceConnected();
+                requestAudioFocus();
             }
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("NAME=")) {
             String deviceName = receivedMcu.substring(6, receivedMcu.length() - 1);
@@ -506,9 +532,11 @@ public class BluetoothPhoneHal {
             if (hfpStatu.equals("3") || hfpStatu.equals("4") || hfpStatu.equals("5")) {
                 int n = SerialPort.setVolumeChannelState(1);
                 Log.e("serial_port", "onVoiceConnected: state = " + n);
+                requestAudioFocus();
             } else {
                 int n = SerialPort.setVolumeChannelState(0);
                 Log.e("serial_port", "onVoiceConnected: state = " + n);
+                abandonAduioFocus();
             }
             hfpStatus = hfpStatu;
             callback.onHfpStatus(Integer.valueOf(hfpStatus));
@@ -533,11 +561,10 @@ public class BluetoothPhoneHal {
                     break;
             }
             if (a2dpStatu.equals("3") || a2dpStatu.equals("4") || a2dpStatu.equals("5")) {
-                int n = SerialPort.setVolumeChannelState(1);
-                Log.e("serial_port", "onVoiceConnected: state = " + n);
+                requestAudioFocus();
             } else {
-                int n = SerialPort.setVolumeChannelState(0);
-                Log.e("serial_port", "onVoiceConnected: state = " + n);
+
+                abandonAduioFocus();
             }
             a2dpStatus = a2dpStatu;
             callback.onA2dpStatus(Integer.valueOf(a2dpStatu));
@@ -573,6 +600,20 @@ public class BluetoothPhoneHal {
         } else if (receivedMcu.equals("UPDATE")) {
             command_setVolume(12, 12);
         }
+    }
+
+    private void requestAudioFocus() {
+        for (int i = 0; i < streamTypes.length; i++) {
+            audioManager.requestAudioFocus(audioFocusChangeListener, streamTypes[i], AUDIOFOCUS_GAIN);
+        }
+        int n = SerialPort.setVolumeChannelState(1);
+        Log.e("serial_port", "onVoiceConnected: state = " + n);
+    }
+
+    private void abandonAduioFocus() {
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        int n = SerialPort.setVolumeChannelState(0);
+        Log.e("serial_port", "onVoiceConnected: state = " + n);
     }
 
     private void updateCallLog() {

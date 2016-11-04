@@ -150,9 +150,6 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_CONNECTED;
         sendMessage(msg);
-        int n = SerialPort.setVolumeChannelState(1);
-        Log.e("serial_port", "onVoiceConnected: state = " + n);
-
     }
 
     @Override
@@ -162,8 +159,6 @@ public class IBPCallbackImpl implements IBPCallback {
         Message msg = new Message();
         msg.what = CommonData.VOICE_DISCONNECTED;
         sendMessage(msg);
-        int n =SerialPort.setVolumeChannelState(0);
-        Log.e("serial_port", "onVoiceDisConnected: state = " + n);
     }
 
     @Override
