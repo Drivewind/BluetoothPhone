@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.anyonavinfo.bluetoothphone.R;
@@ -55,6 +56,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private CheckBox call_mute;
     private CheckBox call_switch;
     public RadioGroup rightMenu;
+    private RadioButton rbtnMeduSetting;
+    private RadioButton rbtnMeduDial;
+    private RadioButton rbtnMeduLinkman;
+    private RadioButton rbtnMeduRecord;
     private CallerIDsFragment callerIDsFragment;
     private DialFragment dialFragment;
     private ConnectingFragment connectingFragment;
@@ -98,9 +103,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
-            call_dial.setClickable(false);
+           /* call_dial.setClickable(false);
             call_mute.setClickable(false);
-            call_switch.setClickable(false);
+            call_switch.setClickable(false);*/
+            enableClick3Icon(false);
             if (sweetAlertDialog != null) {
                 sweetAlertDialog.cancel();
             }
@@ -260,6 +266,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         call_dial = (CheckBox) findViewById(R.id.rbtn_call_dial);
         call_mute = (CheckBox) findViewById(R.id.rbtn_call_mute);
         call_switch = (CheckBox) findViewById(R.id.rbtn_call_switch);
+
+        rbtnMeduSetting = (RadioButton) findViewById(R.id.rbtn_medu_setting);
+        rbtnMeduDial = (RadioButton) findViewById(R.id.rbtn_medu_dial);
+        rbtnMeduLinkman = (RadioButton) findViewById(R.id.rbtn_medu_linkman);
+        rbtnMeduRecord = (RadioButton) findViewById(R.id.rbtn_medu_record);
 
         rightMenu.getChildAt(0).setOnClickListener(this);
         rightMenu.getChildAt(1).setOnClickListener(this);
@@ -527,6 +538,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.HFP_STATU:
                 if (msg.arg1 >= 2) {
                     postDelayedRunnable(connectRunnable, 300);
+                    enableClick4Icon(true);
                 }
                 break;
             case CommonData.A2DP_STATU:
@@ -542,9 +554,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (sweetAlertDialog != null) {
                     sweetAlertDialog.cancel();
                 }
-                call_dial.setClickable(false);
+               /* call_dial.setClickable(false);
                 call_mute.setClickable(false);
-                call_switch.setClickable(false);
+                call_switch.setClickable(false);*/
+                enableClick3Icon(false);
                 break;
             case CommonData.PHONE_TALKING:
                 break;
@@ -564,9 +577,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (sweetAlertDialog != null) {
                     sweetAlertDialog.cancel();
                 }
-                call_dial.setClickable(true);
+               /* call_dial.setClickable(true);
                 call_mute.setClickable(true);
-                call_switch.setClickable(true);
+                call_switch.setClickable(true);*/
+                enableClick3Icon(true);
                 break;
             case CommonData.VOICE_CONNECTED:
                 call_switch.setChecked(true);
@@ -702,5 +716,49 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         sweetAlertDialog.show();
 
     }
+
+    /**
+     * 设置四大按钮是否可以点击
+     * @param status 如果是true，可以点击。如果是false，则不可以点击
+     */
+    public void enableClick4Icon(Boolean status) {
+        rbtnMeduSetting.setEnabled(status);
+        rbtnMeduDial.setEnabled(status);
+        rbtnMeduLinkman.setEnabled(status);
+        rbtnMeduRecord.setEnabled(status);
+
+        if (status){
+            rbtnMeduSetting.setButtonDrawable(R.drawable.selector_medu_set);
+            rbtnMeduDial.setButtonDrawable(R.drawable.selector_medu_dial);
+            rbtnMeduLinkman.setButtonDrawable(R.drawable.selector_medu_linkman);
+            rbtnMeduRecord.setButtonDrawable(R.drawable.selector_medu_record);
+        }else {
+            rbtnMeduSetting.setButtonDrawable(R.drawable.medu_set_unable);
+            rbtnMeduDial.setButtonDrawable(R.drawable.medu_dial_unable);
+            rbtnMeduLinkman.setButtonDrawable(R.drawable.medu_linkman_unable);
+            rbtnMeduRecord.setButtonDrawable(R.drawable.medu_record_unable);
+        }
+    }
+
+    /**
+     * 设置三大按钮是否可以点击
+     * @param status 如果是true，可以点击。如果是false，则不可以点击
+     */
+    public void enableClick3Icon(Boolean status) {
+        call_dial.setEnabled(status);
+        call_mute.setEnabled(status);
+        call_switch.setEnabled(status);
+
+        if (status){
+            call_dial.setButtonDrawable(R.drawable.selector_call_dial);
+            call_mute.setButtonDrawable(R.drawable.selector_call_mute);
+            call_switch.setButtonDrawable(R.drawable.selector_call_switch);
+        }else {
+            call_dial.setButtonDrawable(R.drawable.call_dial_unable);
+            call_mute.setButtonDrawable(R.drawable.call_mute_unable);
+            call_switch.setButtonDrawable(R.drawable.call_switch_unable);
+        }
+    }
+
 
 }
