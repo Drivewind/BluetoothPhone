@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -121,6 +123,28 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
             public boolean onLongClick(View v) {
                 etNumb.setText("");
                 return false;
+            }
+        });
+
+        etNumb.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                etNumb.requestFocus();
+                if (etNumb.getText().length() > 0) {
+                    ibtnDeleteNumb.setVisibility(View.VISIBLE);
+                } else {
+                    ibtnDeleteNumb.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
