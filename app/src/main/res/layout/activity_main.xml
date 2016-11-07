@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context="com.anyonavinfo.bluetoothtel.MainActivity">
+    tools:context="com.anyonavinfo.bluetoothphone.bpclient.MainActivity">
 
     <ImageButton
         android:id="@+id/ibtn_exit"
@@ -32,18 +32,18 @@
                 android:id="@+id/rbtn_medu_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginTop="38px"
                 android:layout_marginBottom="38px"
+                android:layout_marginTop="38px"
                 android:layout_weight="1"
-                android:checked="true"
-                android:button="@drawable/selector_medu_set" />
+                android:button="@drawable/selector_medu_set"
+                android:checked="true" />
 
             <RadioButton
                 android:id="@+id/rbtn_medu_dial"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginTop="38px"
                 android:layout_marginBottom="38px"
+                android:layout_marginTop="38px"
                 android:layout_weight="1"
                 android:button="@drawable/selector_medu_dial" />
 
@@ -51,8 +51,8 @@
                 android:id="@+id/rbtn_medu_linkman"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginTop="38px"
                 android:layout_marginBottom="38px"
+                android:layout_marginTop="38px"
                 android:layout_weight="1"
                 android:button="@drawable/selector_medu_linkman" />
 
@@ -60,8 +60,8 @@
                 android:id="@+id/rbtn_medu_record"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginTop="38px"
                 android:layout_marginBottom="38px"
+                android:layout_marginTop="38px"
                 android:layout_weight="1"
                 android:button="@drawable/selector_medu_record" />
         </RadioGroup>
@@ -89,8 +89,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:checked="true"
                 android:button="@drawable/selector_call_mute"
+                android:checked="true"
                 android:paddingTop="80px" />
 
             <CheckBox
@@ -98,8 +98,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:checked="true"
                 android:button="@drawable/selector_call_switch"
+                android:checked="true"
                 android:paddingTop="80px" />
         </LinearLayout>
 
@@ -107,8 +107,8 @@
             android:id="@+id/frameLayout"
             android:layout_width="1050px"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"></FrameLayout>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"></FrameLayout>
 
     </RelativeLayout>
 
