@@ -1,8 +1,6 @@
 package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +13,11 @@ import android.widget.TextView;
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
-import com.anyonavinfo.bluetoothphone.bpclient.bean.ConnectedDeviceBean;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.DeviceBean;
-import com.anyonavinfo.bluetoothphone.bpclient.fragment.DialFragment;
-import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.anyonavinfo.bluetoothphone.R.id.dialog;
 
 
 /**

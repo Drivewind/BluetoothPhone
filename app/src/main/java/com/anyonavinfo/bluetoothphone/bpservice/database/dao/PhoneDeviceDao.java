@@ -92,7 +92,7 @@ public class PhoneDeviceDao extends SqliteHelper {
 
     public ArrayList<PhoneDevice> queryDevices(int number) {
         ArrayList<PhoneDevice> devicelist = null;
-        Cursor cursor = db.rawQuery("select * from " + SqliteHelper.TABLE_NAME_DEVICE + " order by bdtime desc limit 0,"+number, null);
+        Cursor cursor = db.rawQuery("select * from " + SqliteHelper.TABLE_NAME_DEVICE + " order by _id desc limit 0,"+number, null);
         if (cursor != null && cursor.getCount() > 0) {
             devicelist = new ArrayList<PhoneDevice>();
             while (cursor.moveToNext()) {

@@ -100,13 +100,14 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/et_numb"
+                android:id="@+id/et_number"
                 android:layout_width="430px"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:inputType="phone"
                 android:paddingLeft="90px"
                 android:textColor="#ffffff"
+                android:textCursorDrawable="@null"
                 android:textSize="38px" />
 
             <ImageButton
@@ -116,7 +117,8 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="30px"
                 android:background="@null"
-                android:src="@drawable/delete_numb" />
+                android:src="@drawable/delete_numb"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <LinearLayout
