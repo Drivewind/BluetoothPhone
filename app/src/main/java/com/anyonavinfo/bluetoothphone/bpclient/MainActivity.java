@@ -102,9 +102,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
-           /* call_dial.setClickable(false);
-            call_mute.setClickable(false);
-            call_switch.setClickable(false);*/
             enableClick3Icon(false);
             if (sweetAlertDialog != null) {
                 sweetAlertDialog.cancel();
@@ -114,7 +111,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             transformConnectFragment();
             connectingFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
-            enableClick4Icon(false);
+            enableClick3Icon(false);
+            if (sweetAlertDialog != null) {
+                sweetAlertDialog.cancel();
+            }
         }
     }
 
@@ -172,7 +172,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 isFristOn = true;
             }
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
-            if (action.equals("PHONE_INCOMING")) {
+            if (action.equals("PHONE_INCOMING")||action.equals("PHONE_DIALING")) {
                 phoneService.phoneTransferToBluetooth();
             }
             initHandler();
@@ -559,16 +559,16 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.BLUETOOTH_STATUS:
                 break;
             case CommonData.PHONE_DIALING:
-                toDialingFragment();
-                connectingFragment.call_connect.setText("拨号中...");
-                phoneService.phoneTransferToBluetooth();
-                if (sweetAlertDialog != null) {
-                    sweetAlertDialog.cancel();
-                }
+//                toDialingFragment();
+//                connectingFragment.call_connect.setText("拨号中...");
+//                phoneService.phoneTransferToBluetooth();
+//                if (sweetAlertDialog != null) {
+//                    sweetAlertDialog.cancel();
+//                }
                /* call_dial.setClickable(false);
                 call_mute.setClickable(false);
                 call_switch.setClickable(false);*/
-                enableClick3Icon(false);
+//                enableClick3Icon(false);
                 break;
             case CommonData.PHONE_TALKING:
                 break;
