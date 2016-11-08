@@ -50,7 +50,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
     private RelativeLayout in_call_keyboard;
     private RelativeLayout ring_call;
     private RelativeLayout cancel_call;
-    public EditText etNumb;
+    public EditText etNumber;
     private ImageButton ibtnDeleteNumb;
     private ImageButton dialNum1;
     private ImageButton dialNum2;
@@ -121,12 +121,12 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         ibtnDeleteNumb.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                etNumb.setText("");
+                etNumber.setText("");
                 return false;
             }
         });
 
-        etNumb.addTextChangedListener(new TextWatcher() {
+        etNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -134,8 +134,8 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                etNumb.requestFocus();
-                if (etNumb.getText().length() > 0) {
+               // etNumber.requestFocus();
+                if (etNumber.getText().length() > 0) {
                     ibtnDeleteNumb.setVisibility(View.VISIBLE);
                 } else {
                     ibtnDeleteNumb.setVisibility(View.INVISIBLE);
@@ -152,10 +152,10 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
 
     private void setViews() {
         Log.d("sjj", "1");
-        etNumb = (EditText) view.findViewById(R.id.et_numb);
+        etNumber = (EditText) view.findViewById(R.id.et_number);
         /** edittext不显示软键盘,要显示光标 */
         if (android.os.Build.VERSION.SDK_INT <= 10) {
-            etNumb.setInputType(InputType.TYPE_NULL);
+            etNumber.setInputType(InputType.TYPE_NULL);
         } else {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             try {
@@ -163,7 +163,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
                 Method setSoftInputShownOnFocus;
                 setSoftInputShownOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
                 setSoftInputShownOnFocus.setAccessible(true);
-                setSoftInputShownOnFocus.invoke(etNumb, false);
+                setSoftInputShownOnFocus.invoke(etNumber, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -299,7 +299,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
                 keyPressed(KeyEvent.KEYCODE_DEL);
                 break;
             case R.id.in_cancel_btn:
-                etNumb.setText("");
+                etNumber.setText("");
                 ((MainActivity) getActivity()).phoneService.phoneHangUp();
                 break;
         }
@@ -307,7 +307,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
 
     private void keyPressed(int keyCode) {
         KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
-        etNumb.onKeyDown(keyCode, event);
+        etNumber.onKeyDown(keyCode, event);
         String code = "1";
         if (keyCode <= 16) {
             code = (keyCode - 7) + "";

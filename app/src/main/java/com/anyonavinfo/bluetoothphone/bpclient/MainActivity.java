@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -53,7 +54,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private CheckBox call_dial;
     private CheckBox call_mute;
     private CheckBox call_switch;
-    public RadioGroup rightMenu;
+    public  RadioGroup rightMenu;
     private RadioButton rbtnMeduSetting;
     private RadioButton rbtnMeduDial;
     private RadioButton rbtnMeduLinkman;
@@ -62,7 +63,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private DialFragment dialFragment;
     private ConnectingFragment connectingFragment;
     private LinkmanFragment linkmanFragment;
-    public RecordFragment recordFragment;
+    public  RecordFragment recordFragment;
     private SetFragment setFragment;
     private FragmentTransaction transaction;
     private FragmentManager fm;
@@ -505,6 +506,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         switch (msg.what) {
             case CommonData.HFP_CONNECTED:
 //                postDelayedRunnable(connectRunnable, 300);
+                enableClick4Icon(true);
                 break;
             case CommonData.HFP_DISCONNECTED:
                 postDelayedRunnable(new Runnable() {
@@ -514,6 +516,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                         setFragment.updateDeviceState(null, 0);
                         recordFragment.updatePhoneCallView(null);
                         linkmanFragment.updatePhoneBookView(null);
+                        enableClick4Icon(false);
                     }
                 }, 500);
                 break;
@@ -536,7 +539,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.HFP_STATU:
                 if (msg.arg1 >= 2) {
                     postDelayedRunnable(connectRunnable, 300);
-                    enableClick4Icon(true);
                 }
                 break;
             case CommonData.A2DP_STATU:
@@ -564,7 +566,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     finish();
                 } else {
                     isFristOn = false;
-                    connectingFragment.etNumb.setText("");
+                    connectingFragment.etNumber.setText("");
                     toFragment(preFragment.getTag());
                     curFragment.showIcon();
                 }
@@ -720,6 +722,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
      * @param status 如果是true，可以点击。如果是false，则不可以点击
      */
     public void enableClick4Icon(Boolean status) {
+        Log.e("4 icons status","false");
         rbtnMeduSetting.setEnabled(status);
         rbtnMeduDial.setEnabled(status);
         rbtnMeduLinkman.setEnabled(status);
