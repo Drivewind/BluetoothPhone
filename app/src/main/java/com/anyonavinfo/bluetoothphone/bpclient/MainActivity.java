@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallbackImpl;
@@ -54,7 +55,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private CheckBox call_dial;
     private CheckBox call_mute;
     private CheckBox call_switch;
-    public  RadioGroup rightMenu;
+    public RadioGroup rightMenu;
     private RadioButton rbtnMeduSetting;
     private RadioButton rbtnMeduDial;
     private RadioButton rbtnMeduLinkman;
@@ -63,7 +64,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private DialFragment dialFragment;
     private ConnectingFragment connectingFragment;
     private LinkmanFragment linkmanFragment;
-    public  RecordFragment recordFragment;
+    public RecordFragment recordFragment;
     private SetFragment setFragment;
     private FragmentTransaction transaction;
     private FragmentManager fm;
@@ -71,7 +72,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public Handler mHandler;
     public BluetoothPhoneService phoneService;
     private BaseFragment preFragment, curFragment;
-    private boolean isFristOn,isReStart;
+    private boolean isFristOn, isReStart;
     public SweetAlertDialog sweetAlertDialog;
 
 
@@ -95,10 +96,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
 
-
     private void handlerNewIntent(Intent intent) {
         if (intent.getAction().equals("PHONE_INCOMING")) {
-            isReStart=true;
+            isReStart = true;
             transformCallIDsFragment();
             callerIDsFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();
@@ -186,8 +186,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (CommonData.hfpStatu >= 2) {
                     setFragment.aSwitch.setChecked(true);
                     setFragment.updateDeviceState(CommonData.curDeviceAddr, 1);
+                    enableClick4Icon(true);
                 } else {
                     setFragment.updateDeviceState(CommonData.curDeviceAddr, 0);
+                    enableClick4Icon(false);
                 }
             }
         });
@@ -310,7 +312,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
 
     }
-
 
 
     private void toTalkingFragment() {
@@ -662,7 +663,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
 
 
-
         }
 
     }
@@ -719,21 +719,22 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     /**
      * 设置四大按钮是否可以点击
+     *
      * @param status 如果是true，可以点击。如果是false，则不可以点击
      */
     public void enableClick4Icon(Boolean status) {
-        Log.e("4 icons status","false");
+        Log.e("4 icons status", "false");
         rbtnMeduSetting.setEnabled(status);
         rbtnMeduDial.setEnabled(status);
         rbtnMeduLinkman.setEnabled(status);
         rbtnMeduRecord.setEnabled(status);
 
-        if (status){
+        if (status) {
             rbtnMeduSetting.setButtonDrawable(R.drawable.selector_medu_set);
             rbtnMeduDial.setButtonDrawable(R.drawable.selector_medu_dial);
             rbtnMeduLinkman.setButtonDrawable(R.drawable.selector_medu_linkman);
             rbtnMeduRecord.setButtonDrawable(R.drawable.selector_medu_record);
-        }else {
+        } else {
             rbtnMeduSetting.setButtonDrawable(R.drawable.medu_set_unable);
             rbtnMeduDial.setButtonDrawable(R.drawable.medu_dial_unable);
             rbtnMeduLinkman.setButtonDrawable(R.drawable.medu_linkman_unable);
@@ -743,6 +744,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     /**
      * 设置三大按钮是否可以点击
+     *
      * @param status 如果是true，可以点击。如果是false，则不可以点击
      */
     public void enableClick3Icon(Boolean status) {
@@ -750,11 +752,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         call_mute.setEnabled(status);
         call_switch.setEnabled(status);
 
-        if (status){
+        if (status) {
             call_dial.setButtonDrawable(R.drawable.selector_call_dial);
             call_mute.setButtonDrawable(R.drawable.selector_call_mute);
             call_switch.setButtonDrawable(R.drawable.selector_call_switch);
-        }else {
+        } else {
             call_dial.setButtonDrawable(R.drawable.call_dial_unable);
             call_mute.setButtonDrawable(R.drawable.call_mute_unable);
             call_switch.setButtonDrawable(R.drawable.call_switch_unable);
