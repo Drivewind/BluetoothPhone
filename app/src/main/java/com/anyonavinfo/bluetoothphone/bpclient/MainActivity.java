@@ -156,6 +156,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             String action = getIntent().getAction();
             if (action.equals("PHONE_INCOMING")) {
                 initFragment(4);
+                enableClick3Icon(false);
                 preFragment = null;
                 isFristOn = true;
             } else if (getIntent().getAction().equals("android.intent.action.MAIN")) {
@@ -168,11 +169,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
             } else if (action.equals("PHONE_DIALING")) {
                 initFragment(3);
+                enableClick3Icon(false);
                 preFragment = null;
                 isFristOn = true;
             }
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
-            if (action.equals("PHONE_INCOMING")||action.equals("PHONE_DIALING")) {
+            if (action.equals("PHONE_INCOMING") || action.equals("PHONE_DIALING")) {
                 phoneService.phoneTransferToBluetooth();
             }
             initHandler();

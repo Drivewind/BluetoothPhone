@@ -134,7 +134,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-               // etNumber.requestFocus();
+                // etNumber.requestFocus();
                 if (etNumber.getText().length() > 0) {
                     ibtnDeleteNumb.setVisibility(View.VISIBLE);
                 } else {
@@ -211,7 +211,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         if (CommonData.talkingContact == null)
             return;
         if (CommonData.hfpStatu == 3) {
-            call_connect.setText("拨号中");
+            call_connect.setText("拨号中...");
         }
     }
 
@@ -363,7 +363,8 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
             call_name.setText(book.getPbname());
             in_call_name.setText(book.getPbname());
         }
-        Log.e("place", book.getPbplace());
+        System.out.println("111111111111111" + book.getPbplace());
+        Log.d("sjj", book.getPbplace());
         call_dist.setText(book.getPbplace());
         //in_call_place.setText(book.getPbplace());
         if (CommonData.hfpStatu == 3) {

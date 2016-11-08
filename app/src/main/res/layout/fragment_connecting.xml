@@ -115,10 +115,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-
                 android:layout_marginLeft="30px"
                 android:background="@null"
-                android:src="@drawable/delete_numb" />
+                android:src="@drawable/delete_numb"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <LinearLayout
