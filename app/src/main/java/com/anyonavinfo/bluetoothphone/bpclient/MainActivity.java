@@ -109,6 +109,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             if (sweetAlertDialog != null) {
                 sweetAlertDialog.cancel();
             }
+        } else if (intent.getAction().equals("PHONE_DIALING")) {
+            transformConnectFragment();
+            connectingFragment.setCallData(CommonData.talkingContact);
+            phoneService.phoneTransferToBluetooth();
+            enableClick4Icon(false);
         }
     }
 
@@ -160,6 +165,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 } else if (CommonData.hfpStatu == 5) {
                     initFragment(5);
                 }
+            } else if (action.equals("PHONE_DIALING")) {
+                initFragment(3);
+                preFragment = null;
+                isFristOn = true;
             }
             phoneService = ((BluetoothPhoneService.MyBinder) service).getService();
             if (action.equals("PHONE_INCOMING")) {

@@ -367,7 +367,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         call_dist.setText(book.getPbplace());
         //in_call_place.setText(book.getPbplace());
         if (CommonData.hfpStatu == 3) {
-            call_connect.setText("拨号中");
+            call_connect.setText("拨号中...");
         }
     }
 

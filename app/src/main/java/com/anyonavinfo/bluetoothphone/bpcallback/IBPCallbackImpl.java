@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.anyonavinfo.bluetoothphone.bpclient.utils.PadUtil;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.imxserial.SerialPort;
@@ -84,7 +83,6 @@ public class IBPCallbackImpl implements IBPCallback {
         bundle.putString("number", book.getPbnumber());
         bundle.putString("place", book.getPbplace());
         launchActivity(mContext, "com.anyonavinfo.bluetoothphone", bundle);
-        PadUtil.releaseKeyguard(mContext);
     }
 
     @Override
@@ -99,7 +97,6 @@ public class IBPCallbackImpl implements IBPCallback {
         bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
-        PadUtil.releaseKeyguard(mContext);
     }
 
     @Override
