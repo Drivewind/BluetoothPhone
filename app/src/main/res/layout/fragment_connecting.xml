@@ -296,7 +296,7 @@
             android:layout_centerInParent="true"
             android:text="拨号中..."
             android:textColor="#f4f4f4"
-            android:textSize="40px" />
+            android:textSize="45px" />
 
         <!-- <TextView
              android:id="@+id/connect_time"

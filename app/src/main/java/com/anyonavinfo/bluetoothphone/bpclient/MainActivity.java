@@ -110,6 +110,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 sweetAlertDialog.cancel();
             }
         } else if (intent.getAction().equals("PHONE_DIALING")) {
+            isReStart = true;
             transformConnectFragment();
             connectingFragment.setCallData(CommonData.talkingContact);
             phoneService.phoneTransferToBluetooth();

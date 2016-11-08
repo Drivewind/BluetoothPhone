@@ -211,7 +211,7 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
         if (CommonData.talkingContact == null)
             return;
         if (CommonData.hfpStatu == 3) {
-            call_connect.setText("拨号中...");
+            call_connect.setText("拨号中");
         }
     }
 

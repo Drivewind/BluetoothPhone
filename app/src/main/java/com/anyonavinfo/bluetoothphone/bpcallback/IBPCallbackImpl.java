@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.anyonavinfo.bluetoothphone.bpclient.utils.PadUtil;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.imxserial.SerialPort;
@@ -83,6 +84,7 @@ public class IBPCallbackImpl implements IBPCallback {
         bundle.putString("number", book.getPbnumber());
         bundle.putString("place", book.getPbplace());
         launchActivity(mContext, "com.anyonavinfo.bluetoothphone", bundle);
+        PadUtil.releaseKeyguard(mContext);
     }
 
     @Override
@@ -97,6 +99,8 @@ public class IBPCallbackImpl implements IBPCallback {
         bundle.putString("place", book.getPbplace());
         msg.setData(bundle);
         sendMessage(msg);
+        launchDialing(mContext, "com.anyonavinfo.bluetoothphone", bundle);
+        PadUtil.releaseKeyguard(mContext);
     }
 
     @Override
@@ -414,4 +418,19 @@ public class IBPCallbackImpl implements IBPCallback {
         return false;
     }
 
+    public static boolean launchDialing(Context context, String packageName, Bundle bundle) {
+        if (packageName != null && !packageName.equals("")
+                ) {
+            Intent intent = context.getPackageManager()
+                    .getLaunchIntentForPackage(packageName);
+            intent.putExtras(bundle);
+            intent.setAction("PHONE_DIALING");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+            return true;
+        }
+        return false;
+    }
 }
