@@ -69,7 +69,6 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     }
 
 
-
     /**
      * sent command to bluetooth module
      */
@@ -81,8 +80,6 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     }
 
 
-
-
     class StartThread extends Thread {
 
         @Override
@@ -92,28 +89,19 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
                 @Override
                 public void PutData(byte[] receivedData) {
-                        phoneHal.inMcu(receivedData);
+                    phoneHal.inMcu(receivedData);
 
                 }
             });
-
-            try {
-                Thread.sleep(500);
-                phoneHal.command_getWorkState();
-                sleep(20);
-                phoneHal.command_getCurDeviceName();
-                sleep(20);
-                phoneHal.command_getCurDeviceAddr();
-                sleep(20);
-                phoneHal.command_getDeviceName();
-                sleep(20);
-                phoneHal.command_setVolume(15,15);
-                sleep(20);
-                phoneHal.command_getVolume();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            phoneHal.command_getWorkState();
+            phoneHal.command_getCurDeviceName();
+            phoneHal.command_getCurDeviceAddr();
+            phoneHal.command_getDeviceName();
+            phoneHal.command_setVolume(15, 15);
+            phoneHal.command_getVolume();
+            ArrayList<PhoneDevice> list = phoneHal.getPairList(1);
+            if (list != null && list.get(0) != null && list.get(0).getBdaddr() != null)
+                phoneHal.command_connect(phoneHal.getPairList(1).get(0).getBdaddr());
         }
     }
 
@@ -151,8 +139,6 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     }
 
 
-
-
     @Override
     public void deletePair(String addr) {
         phoneHal.deletePair(addr);
@@ -160,7 +146,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
     @Override
     public void deletePhoneCall(String number, String time) {
-        phoneHal.deletePhoneCall(number,time);
+        phoneHal.deletePhoneCall(number, time);
     }
 
     @Override
@@ -197,21 +183,23 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     }
 
 
-
     @Override
     public void phoneTransfer() {
         phoneHal.command_transform();
     }
+
     ;
+
     @Override
-    public  void phoneTransferToPhone(){
+    public void phoneTransferToPhone() {
         phoneHal.command_transformToPhone();
     }
 
     @Override
-    public  void phoneTransferToBluetooth(){
+    public void phoneTransferToBluetooth() {
         phoneHal.command_transformToBluetooth();
     }
+
     @Override
     public void phoneDialLast() {
         phoneHal.command_dialLast();
@@ -221,6 +209,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     public void phoneDailDTMF(String dtmf) {
         phoneHal.command_dialDTMF(dtmf);
     }
+
     ;
 
     @Override
@@ -230,18 +219,19 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
     @Override
     public void incVolume(int step) {
-        if(step==1){
+        if (step == 1) {
             phoneHal.command_incVolume();
-        }else if(step>1){
+        } else if (step > 1) {
             phoneHal.command_incVolume(step);
-        }        ;
+        }
+        ;
     }
 
     @Override
     public void decVolume(int step) {
-        if(step==1){
+        if (step == 1) {
             phoneHal.command_decVolume();
-        }else if(step>1){
+        } else if (step > 1) {
             phoneHal.command_decVolume(step);
         }
     }
@@ -278,7 +268,6 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     public void phoneBookStopUpdate() {
         phoneHal.command_stopDownloadPhonebook();
     }
-
 
 
     @Override
@@ -320,14 +309,14 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
     @Override
     public void getCurrentDeviceAddr() {
-         phoneHal.command_getCurDeviceAddr();
+        phoneHal.command_getCurDeviceAddr();
     }
 
     ;
 
     @Override
     public void getCurrentDeviceName() {
-         phoneHal.command_getCurDeviceName();
+        phoneHal.command_getCurDeviceName();
     }
 
     ;
@@ -344,7 +333,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
     @Override
     public ArrayList<PhoneCall> getPhoneCallList(int type) {
-            return phoneHal.getPhoneCall(type);
-        }
+        return phoneHal.getPhoneCall(type);
+    }
 
 }

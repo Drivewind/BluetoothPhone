@@ -333,7 +333,11 @@ public class BluetoothPhoneHal {
     }
 
     public void deletePair(String addr) {
-        phoneDeviceDao.deleteDevice(addr);
+        if (addr != null) {
+            phoneDeviceDao.deleteDevice(addr);
+            phoneBookDao.deleteAllPhoneBooks(addr);
+            phoneCallDao.deleteAllPhoneCalls(addr);
+        }
     }
 
     public void updatePhoneBook(PhoneBook book) {
@@ -511,7 +515,7 @@ public class BluetoothPhoneHal {
                         public void run() {
                             command_getCurDeviceName();
                         }
-                    },2000);
+                    }, 2000);
                     break;
                 case "3":
                     if (hfpStatus.equals("2")) {
