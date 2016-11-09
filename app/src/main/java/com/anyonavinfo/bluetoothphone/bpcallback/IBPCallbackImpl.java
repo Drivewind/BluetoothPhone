@@ -119,7 +119,6 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onTalking(PhoneBook book) {
         Log("You are talking to " + book.getPbname() + " " + book.getPbnumber());
-        CommonData.talkingContact = book;
         Message msg = new Message();
         msg.what = CommonData.PHONE_TALKING;
         Bundle bundle = new Bundle();
@@ -132,7 +131,7 @@ public class IBPCallbackImpl implements IBPCallback {
 
     @Override
     public void onCallSuccessed(PhoneBook book) {
-        Log("You had call " + book.getPbname() + " successfully !");
+        Log("You had call " + book.getPbname() +"  "+CommonData.talkingContact.getPbplace()+ " successfully !");
         CommonData.talkingTime = 0;
         talkingThread = new TalkingThread();
         talkingThread.start();
@@ -375,7 +374,6 @@ public class IBPCallbackImpl implements IBPCallback {
         if (CommonData.talkingContact != null) {
             CommonData.talkingContact.setPbplace(operator);
         }
-Log(CommonData.talkingContact.getBdaddr()+" "+CommonData.talkingContact.getPbname()+" "+CommonData.talkingContact.getPbplace()+" "+CommonData.talkingContact);
         Message msg = new Message();
         msg.what = CommonData.PHONEOPERATOR_SUCCESSED;
         Bundle bundle = new Bundle();

@@ -327,11 +327,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
 
     private void toTalkingFragment() {
+        connectingFragment.setCallData(CommonData.talkingContact);
         if (!curFragment.equals(connectingFragment)) {
             transformConnectFragment();
         }
-        Log.e("BPService", "toTalkingFragment: "+CommonData.talkingContact );
-        connectingFragment.setCallData(CommonData.talkingContact);
     }
 
     private void toDialingFragment() {
