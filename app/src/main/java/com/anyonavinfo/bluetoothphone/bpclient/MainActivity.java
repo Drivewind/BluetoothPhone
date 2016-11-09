@@ -298,7 +298,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         call_switch.setOnClickListener(this);
 
         ibtnExit.setOnClickListener(this);
-
+        enableClick4Icon(false);
     }
 
     /**
@@ -329,9 +329,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private void toTalkingFragment() {
         if (!curFragment.equals(connectingFragment)) {
             transformConnectFragment();
-        } else {
-
         }
+        Log.e("BPService", "toTalkingFragment: "+CommonData.talkingContact );
         connectingFragment.setCallData(CommonData.talkingContact);
     }
 
@@ -520,6 +519,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.HFP_CONNECTED:
 //                postDelayedRunnable(connectRunnable, 300);
                 enableClick4Icon(true);
+                setFragment.aSwitch.setChecked(true);
                 break;
             case CommonData.HFP_DISCONNECTED:
                 postDelayedRunnable(new Runnable() {
@@ -561,16 +561,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.BLUETOOTH_STATUS:
                 break;
             case CommonData.PHONE_DIALING:
-//                toDialingFragment();
-//                connectingFragment.call_connect.setText("拨号中...");
-//                phoneService.phoneTransferToBluetooth();
-//                if (sweetAlertDialog != null) {
-//                    sweetAlertDialog.cancel();
-//                }
-               /* call_dial.setClickable(false);
-                call_mute.setClickable(false);
-                call_switch.setClickable(false);*/
-//                enableClick3Icon(false);
                 break;
             case CommonData.PHONE_TALKING:
                 break;
@@ -590,9 +580,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (sweetAlertDialog != null) {
                     sweetAlertDialog.cancel();
                 }
-               /* call_dial.setClickable(true);
-                call_mute.setClickable(true);
-                call_switch.setClickable(true);*/
                 enableClick3Icon(true);
                 break;
             case CommonData.VOICE_CONNECTED:
@@ -635,8 +622,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.PHONEOPERATOR_SUCCESSED:
                 if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 5) {
-                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace()))
-                        connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());
+                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace())){
+                        connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());}
                 } else if (CommonData.hfpStatu == 4) {
                     if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace()))
                         callerIDsFragment.caller_dist.setText(CommonData.talkingContact.getPbplace());

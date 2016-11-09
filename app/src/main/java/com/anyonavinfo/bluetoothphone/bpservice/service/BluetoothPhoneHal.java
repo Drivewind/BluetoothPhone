@@ -636,8 +636,8 @@ public class BluetoothPhoneHal {
         } else if (hfpStatus.equals("5")) {
             if (mComingPhoneNum != null && mDiaingPhoneNum == null) {
                 saveCallLog(mComingPhoneNum, 4);
-            } else if (mComingPhoneNum == null || mDiaingPhoneNum != null) {
-                saveCallLog(mComingPhoneNum, 2);
+            } else if (mComingPhoneNum == null && mDiaingPhoneNum != null) {
+               saveCallLog(mDiaingPhoneNum, 2);
             }
         }
         phoneStateReset();
@@ -785,13 +785,12 @@ public class BluetoothPhoneHal {
                 public void onSusscess(String data) {
                     Log.e(TAG, "onSusscess: " + data);
                     TelPlace place = JsonUtil.parseJsonToBean(data, TelPlace.class);
-                    if (place != null && place.getRetData() != null) {
+                    if (place!=null&&place.getRetData()!=null&&!TextUtils.isEmpty(place.getRetData().getCarrier())) {
                         String operator = place.getRetData().getCarrier();
                         phoneBookDao.updatePhoneBookPlace(mCurDevAddr, number, operator);
                         phoneCallDao.updatePhoneCallPlace(mCurDevAddr, number, operator);
                         callback.onPhoneOperatorSuccessed(operator);
                     }
-
                 }
             });
         }

@@ -363,7 +363,6 @@ public class ConnectingFragment extends BaseFragment implements View.OnClickList
             call_name.setText(book.getPbname());
             in_call_name.setText(book.getPbname());
         }
-        Log.d("sjj", book.getPbplace());
         call_dist.setText(book.getPbplace());
         //in_call_place.setText(book.getPbplace());
         if (CommonData.hfpStatu == 3) {

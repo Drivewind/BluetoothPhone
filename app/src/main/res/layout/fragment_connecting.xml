@@ -24,7 +24,8 @@
         android:id="@+id/call_status_place"
         android:layout_width="match_parent"
         android:layout_height="40px"
-        android:layout_marginTop="20px">
+        android:layout_marginTop="20px"
+        >
 
         <TextView
             android:id="@+id/R_dist"
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="#f4f4f4"
+            android:text="Austria"
             android:textSize="28px" />
 
     </RelativeLayout>

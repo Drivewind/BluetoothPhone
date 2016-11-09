@@ -133,7 +133,6 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onCallSuccessed(PhoneBook book) {
         Log("You had call " + book.getPbname() + " successfully !");
-        CommonData.talkingContact = book;
         CommonData.talkingTime = 0;
         talkingThread = new TalkingThread();
         talkingThread.start();
@@ -372,10 +371,11 @@ public class IBPCallbackImpl implements IBPCallback {
 
     @Override
     public void onPhoneOperatorSuccessed(String operator) {
-        Log("Phone operator is get for network successfully !");
+        Log("Phone operator is get for network successfully ! operator is :"+operator);
         if (CommonData.talkingContact != null) {
             CommonData.talkingContact.setPbplace(operator);
         }
+Log(CommonData.talkingContact.getBdaddr()+" "+CommonData.talkingContact.getPbname()+" "+CommonData.talkingContact.getPbplace()+" "+CommonData.talkingContact);
         Message msg = new Message();
         msg.what = CommonData.PHONEOPERATOR_SUCCESSED;
         Bundle bundle = new Bundle();
