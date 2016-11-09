@@ -64,6 +64,8 @@ public class BluetoothPhoneHal {
     private String isInPair = "0";//0非配对状态,1配对状态
     private String powerStatus = "0";//0关机状态,1开机状态
 
+    private String scoStatus="0";
+
     private PBDownloadThread pbDownloadThread;
 
     private AudioManager audioManager;
@@ -412,6 +414,7 @@ public class BluetoothPhoneHal {
             callback.onStatus(Integer.valueOf(powerStatus), Integer.valueOf(isInPair), Integer.valueOf(hfpStatus), Integer.valueOf(a2dpStatus), Integer.valueOf(avrcpStatus));
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("SCO=")) {
             String scoStatu = receivedMcu.substring(4);
+            scoStatus = scoStatu;
             if (scoStatu.equals("0")) {
                 if (hfpStatus.equals("5")) {
                     callback.onVoiceDisconnected();
@@ -534,6 +537,11 @@ public class BluetoothPhoneHal {
                         postRunnable(dialSuccessRunnable);
                     } else if (hfpStatus.equals("2")) {
                         postRunnable(dialSuccessRunnable);
+                    }
+                    if(scoStatus.equals("0")){
+                        callback.onVoiceDisconnected();
+                    }else if(scoStatus.equals("1")){
+                        callback.onVoiceConnected();
                     }
                     break;
                 default:
