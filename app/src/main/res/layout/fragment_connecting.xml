@@ -262,7 +262,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
-                android:src="@drawable/numb_0"
+                android:src="@drawable/number_0"
                 android:tag="0" />
 
             <ImageButton

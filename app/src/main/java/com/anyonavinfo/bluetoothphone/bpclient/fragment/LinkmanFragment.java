@@ -223,20 +223,19 @@ public class LinkmanFragment extends BaseFragment {
         return phoneCalls;
     }
 
-    /**
+    /**A
      * 筛选动作
      */
     private void filterData(String s) {
         List<MyPhoneBook> filterDateList = new ArrayList<MyPhoneBook>();
-
-        Log.i("周志安", "myPhoneBooks=" + mMyPhoneBooks.size());
         if (TextUtils.isEmpty(s)) {
-            filterDateList = mMyPhoneBooks;
-            Log.i("周志安", "TextUtils.isEmpty(s)=" + s + mMyPhoneBooks.size());
-        } else {
-            Log.i("周志安", "TextUtils.isEmpty(s)=" + s);
             filterDateList.clear();
-            Log.i("周志安", "filterDateList.clear()=" + mMyPhoneBooks.size());
+            for (MyPhoneBook myPhoneBook : mMyPhoneBooks) {
+                filterDateList.add(myPhoneBook);
+            }
+           // filterDateList = mMyPhoneBooks;
+        } else {
+            filterDateList.clear();
             for (MyPhoneBook myPhoneBook : mMyPhoneBooks) {
                 //后续要把号码也拼接上，统一搜索
                 String name = myPhoneBook.getPbname() + myPhoneBook.getPbnumber();
@@ -245,7 +244,6 @@ public class LinkmanFragment extends BaseFragment {
                     filterDateList.add(myPhoneBook);
                 }
             }
-            Log.i("周志安", "filterDateList.siza()=" + filterDateList.size());
         }
         // 根据a-z进行排序
         Collections.sort(filterDateList, pinyinComparator);
