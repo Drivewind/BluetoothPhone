@@ -621,8 +621,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.PHONEOPERATOR_SUCCESSED:
                 if (CommonData.hfpStatu == 3 || CommonData.hfpStatu == 5) {
-                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace())){
-                        connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());}
+                    if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace())) {
+                        connectingFragment.call_dist.setText(CommonData.talkingContact.getPbplace());
+                    }
                 } else if (CommonData.hfpStatu == 4) {
                     if (!TextUtils.isEmpty(CommonData.talkingContact.getPbplace()))
                         callerIDsFragment.caller_dist.setText(CommonData.talkingContact.getPbplace());
