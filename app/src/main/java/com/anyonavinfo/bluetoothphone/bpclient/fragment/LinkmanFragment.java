@@ -121,9 +121,10 @@ public class LinkmanFragment extends BaseFragment {
                 }
                 ((MainActivity) getActivity()).recordFragment.updatePhoneCallView(((MainActivity) getActivity()).phoneService.getPhoneCallList(0));
                 btnDeleteLinkman.setText("删除（" + 0 + "）");
-                adapter.updateListView(adapter.getData());
                 linkmanCbAll.setChecked(false);
                 adapter.setCBVisibility(false);
+                adapter.notifyDataSetChanged();
+//                adapter.updateListView(adapter.getData());
                 managerView(false);
             }
         });
@@ -223,17 +224,18 @@ public class LinkmanFragment extends BaseFragment {
         return phoneCalls;
     }
 
-    /**A
+    /**
      * 筛选动作
      */
     private void filterData(String s) {
         List<MyPhoneBook> filterDateList = new ArrayList<MyPhoneBook>();
+
         if (TextUtils.isEmpty(s)) {
             filterDateList.clear();
             for (MyPhoneBook myPhoneBook : mMyPhoneBooks) {
                 filterDateList.add(myPhoneBook);
             }
-           // filterDateList = mMyPhoneBooks;
+//            filterDateList = mMyPhoneBooks;
         } else {
             filterDateList.clear();
             for (MyPhoneBook myPhoneBook : mMyPhoneBooks) {
