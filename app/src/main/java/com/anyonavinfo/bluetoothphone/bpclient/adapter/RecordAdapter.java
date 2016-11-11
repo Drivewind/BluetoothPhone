@@ -101,17 +101,19 @@ public class RecordAdapter extends BaseAdapter {
             viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    list.get(checkedIndex).setChecked(isChecked);
-                    int i=0;
-                    for(MyPhoneCall call :list){
-                        if(call.isChecked()){
-                            i++;
+                    if(visibility){
+                        list.get(checkedIndex).setChecked(isChecked);
+                        int i=0;
+                        for(MyPhoneCall call :list){
+                            if(call.isChecked()){
+                                i++;
+                            }
                         }
+                        Message msg = new Message();
+                        msg.what=0x3001;
+                        msg.arg1=i;
+                        ((MainActivity) mContext).sendMessage(msg);
                     }
-                    Message msg = new Message();
-                    msg.what=0x3001;
-                    msg.arg1=i;
-                    ((MainActivity) mContext).sendMessage(msg);
                 }
             });
         } else {
