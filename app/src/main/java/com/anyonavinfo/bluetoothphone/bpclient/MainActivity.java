@@ -585,6 +585,7 @@ private boolean isInitOk;
                             if(curPosition!=-1){
                                 setFragment.updateDeviceState(curPosition,2);
                             }
+
                         }else if(connectAction==1){
                             //更新状态为未连接
                             setFragment.updateDeviceState(curPosition,0);
