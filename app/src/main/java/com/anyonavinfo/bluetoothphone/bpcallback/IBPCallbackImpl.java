@@ -139,7 +139,7 @@ public class IBPCallbackImpl implements IBPCallback {
 
     @Override
     public void onCallSuccessed(PhoneBook book) {
-        Log("You had call " + book.getPbname() +"  "+CommonData.talkingContact.getPbplace()+ " successfully !");
+        Log("You had call " + book.getPbname() +" successfully !");
         CommonData.talkingTime = 0;
         talkingThread = new TalkingThread();
         talkingThread.start();
