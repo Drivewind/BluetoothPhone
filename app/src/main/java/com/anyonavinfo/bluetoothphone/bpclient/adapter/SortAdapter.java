@@ -78,7 +78,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
         return position;
     }
 
-    public View getView(final int position, View view, ViewGroup arg2) {
+    public View getView(int position, View view, ViewGroup arg2) {
         ViewHolder viewHolder;
         final int checkedIndex = position;/**初始化checkbox的监听位置*/
         if (view == null) {
@@ -97,19 +97,20 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
             viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.e("BPService", "onCheckedChanged Position : "+position +"data's size:"+list.size());
-                    list.get(checkedIndex).setChecked(isChecked);
-                    int i=0;
-                    for(MyPhoneBook book :list){
-                        if(book.isChecked()){
-                            i++;
+                    Log.i("周志安","visibility="+visibility+checkedIndex);
+                    if(visibility){
+                        list.get(checkedIndex).setChecked(isChecked);
+                        int i=0;
+                        for(MyPhoneBook book :list){
+                            if(book.isChecked()){
+                                i++;
+                            }
                         }
+                        Message msg = new Message();
+                        msg.what=0x3002;
+                        msg.arg1=i;
+                        ((MainActivity) mContext).sendMessage(msg);
                     }
-                    Message msg = new Message();
-                    msg.what=0x3002;
-                    msg.arg1=i;
-                    ((MainActivity) mContext).sendMessage(msg);
-
                 }
             });
         } else {
