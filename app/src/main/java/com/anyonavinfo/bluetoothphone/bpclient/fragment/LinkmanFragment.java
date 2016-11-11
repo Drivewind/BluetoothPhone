@@ -85,8 +85,9 @@ public class LinkmanFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //当输入框里面的值为空，更新为原来的列表，否则为过滤数据列表
-                filterData(s.toString());
-                Log.i("周志安", "onTextChanged");
+                if(adapter.getData()!=null && mMyPhoneBooks!=null){
+                    filterData(s.toString());
+                }
             }
 
             @Override
