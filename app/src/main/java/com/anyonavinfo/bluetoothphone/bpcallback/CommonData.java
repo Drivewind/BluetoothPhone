@@ -7,6 +7,7 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
  */
 
 public class CommonData {
+    public static final int BLUETOOTH_INITOK = 0x1000;
     public static final int HFP_CONNECTED = 0x1001;
     public static final int HFP_DISCONNECTED = 0x1002;
     public static final int HFP_CONNECTING = 0x1003;

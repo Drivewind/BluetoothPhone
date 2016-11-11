@@ -2,6 +2,7 @@ package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
 import android.content.Context;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,6 +97,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
             viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.e("BPService", "onCheckedChanged Position : "+position +"data's size:"+list.size());
                     list.get(checkedIndex).setChecked(isChecked);
                     int i=0;
                     for(MyPhoneBook book :list){

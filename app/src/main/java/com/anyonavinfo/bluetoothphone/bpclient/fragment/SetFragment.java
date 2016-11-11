@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpclient.MainActivity;
@@ -22,8 +23,10 @@ import com.anyonavinfo.bluetoothphone.bpclient.base.BaseFragment;
 import com.anyonavinfo.bluetoothphone.bpclient.bean.DeviceBean;
 import com.anyonavinfo.bluetoothphone.bpclient.custom.SwitchButton;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
@@ -40,7 +43,7 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
     private ListView devlist;
     private List<DeviceBean> deviceBeanList;
     public LinkedDeviceAdapter deviceAdapter = null;
-    ArrayList<DeviceBean> deviceList;
+    public ArrayList<DeviceBean> deviceList;
     private OnUiReady uiReadyListener;
 
     @Override
@@ -104,12 +107,22 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
                     if (addr.equals(deviceList.get(i).getDeviceAddr())) {
                         deviceList.get(i).setDeviceState(state);
                         break;
-
                     } else {
                         deviceList.get(i).setDeviceState(0);
                     }
                 }
             }
+            deviceAdapter.setData(deviceList);
+            deviceAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void updateDeviceState(int position, int state) {
+        if (deviceList != null && deviceList.size() > position) {
+            for (DeviceBean bean : deviceList) {
+                bean.setDeviceState(0);
+            }
+            deviceList.get(position).setDeviceState(state);
             deviceAdapter.setData(deviceList);
             deviceAdapter.notifyDataSetChanged();
         }

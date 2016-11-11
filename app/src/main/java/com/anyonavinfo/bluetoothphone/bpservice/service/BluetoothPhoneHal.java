@@ -395,6 +395,8 @@ public class BluetoothPhoneHal {
             String ack = receivedMcu.substring(4);
         } else if (receivedMcu.length() >= 4 && receivedMcu.substring(0, 4).equals("APP=")) {
             String appVersion = receivedMcu.substring(4);
+        } else if (receivedMcu.equals("INITOK")) {
+           callback.onInitOk();
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("MUTE=")) {
             String mute = receivedMcu.substring(5);
             if (mute.equals("1")) {
@@ -513,12 +515,7 @@ public class BluetoothPhoneHal {
                         callback.onHfpConnected();
                     }
                     updateCallLog();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            command_getCurDeviceName();
-                        }
-                    }, 2000);
+                    command_getCurDeviceName();
                     break;
                 case "3":
                     if (hfpStatus.equals("2")) {
