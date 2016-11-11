@@ -739,6 +739,7 @@ private boolean isInitOk;
                 setFragment.updateDeviceData();
                 setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);}
                 break;
+
             default:
                 break;
 
