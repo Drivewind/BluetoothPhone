@@ -538,7 +538,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     public void run() {
                         isInitOk = false;
                     }
-                }, 20);
+                }, 50);
                 break;
             case CommonData.HFP_CONNECTED:
                 enableClick4Icon(true);
@@ -579,7 +579,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                         public void run() {
                             isDisConnectOk = false;
                         }
-                    }, 100);//每个手机间隔不一样
+                    }, 200);//每个手机间隔不一样
                 } else if (tempHfpStatu == 0 && msg.arg1 == 0) {
 
                     if (isDisConnectOk && !isInitOk) {
