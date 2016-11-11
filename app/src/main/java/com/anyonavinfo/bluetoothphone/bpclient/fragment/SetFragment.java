@@ -118,7 +118,7 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
     }
 
     public void updateDeviceState(int position, int state) {
-        if (deviceList != null && deviceList.size() > position) {
+        if (deviceList != null && deviceList.size() > position&&position>=0) {
             for (DeviceBean bean : deviceList) {
                 bean.setDeviceState(0);
             }

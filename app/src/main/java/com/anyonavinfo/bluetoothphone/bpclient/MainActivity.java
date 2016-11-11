@@ -519,7 +519,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             setFragment.updateDeviceState(null, 0);
             recordFragment.updatePhoneCallView(null);
             linkmanFragment.updatePhoneBookView(null);
-            enableClick4Icon(false);
         }
     };
 
@@ -546,6 +545,7 @@ private boolean isInitOk;
                 setFragment.aSwitch.setChecked(true);
                 break;
             case CommonData.HFP_DISCONNECTED:
+                enableClick4Icon(false);
                 break;
             case CommonData.HFP_CONNECTING:
                 break;
@@ -582,11 +582,8 @@ private boolean isInitOk;
                         //断开成功
                         if(connectAction==2||connectAction==3){
                             //更新状态为连接中
-                            if(curPosition!=-1){
                                 setFragment.updateDeviceState(curPosition,2);
-                            }
-
-                        }else if(connectAction==1){
+                        }else {
                             //更新状态为未连接
                             setFragment.updateDeviceState(curPosition,0);
                         }
@@ -599,6 +596,7 @@ private boolean isInitOk;
                         }else if(connectAction==1){
                             //不做任何事情
                         }
+                        connectAction=-1;
                     }else if(!isDisConnectOk&&!isInitOk){
                         //重新连接失败
                         postDelayedRunnable(disConnectRunnable, 500);
@@ -609,6 +607,7 @@ private boolean isInitOk;
                 }else if(tempHfpStatu<2&&msg.arg1>=2){
                     //连接成功
                     postDelayedRunnable(connectRunnable, 300);
+                    connectAction=-1;
                 }
                 tempHfpStatu=msg.arg1;
                 break;
@@ -735,9 +734,7 @@ private boolean isInitOk;
                 //断开连接
                 curPosition=msg.arg2;
                 connectAction=1;
-                if(CommonData.curDeviceAddr!=null){
-                setFragment.updateDeviceData();
-                setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);}
+                setFragment.updateDeviceState(curPosition,3);
                 break;
 
             default:
