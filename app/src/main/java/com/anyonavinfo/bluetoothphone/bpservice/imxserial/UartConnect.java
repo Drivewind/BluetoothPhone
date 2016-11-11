@@ -235,9 +235,10 @@ public class UartConnect {
             super.run();
             while (!isInterrupted()) {
                 try {
-                    final String command = sentQuene.take();
+                    final String command = sentQuene.poll();
                     if (!TextUtils.isEmpty(command)) {
                         SendData(command);
+                        Log.e("BPService", "sent message is "+command  );
                     }
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

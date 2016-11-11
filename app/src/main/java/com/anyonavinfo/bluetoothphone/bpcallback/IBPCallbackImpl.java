@@ -60,6 +60,14 @@ public class IBPCallbackImpl implements IBPCallback {
     }
 
     @Override
+    public void onInitOk() {
+        Log("Bluetooth Model is initOk !");
+        Message msg = new Message();
+        msg.what=CommonData.BLUETOOTH_INITOK;
+        sendMessage(msg);
+    }
+
+    @Override
     public void onHfpDisconnected() {
         Log("Hfp is disconnected !");
         Message msg = new Message();

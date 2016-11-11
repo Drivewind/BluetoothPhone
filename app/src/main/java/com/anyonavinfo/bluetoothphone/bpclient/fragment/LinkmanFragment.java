@@ -120,13 +120,13 @@ public class LinkmanFragment extends BaseFragment {
                         adapter.getData().remove(i);
                     }
                 }
-                ((MainActivity) getActivity()).recordFragment.updatePhoneCallView(((MainActivity) getActivity()).phoneService.getPhoneCallList(0));
                 btnDeleteLinkman.setText("删除（" + 0 + "）");
                 linkmanCbAll.setChecked(false);
                 adapter.setCBVisibility(false);
                 adapter.notifyDataSetChanged();
 //                adapter.updateListView(adapter.getData());
                 managerView(false);
+                ((MainActivity) getActivity()).recordFragment.updatePhoneCallView(((MainActivity) getActivity()).phoneService.getPhoneCallList(0));
             }
         });
 

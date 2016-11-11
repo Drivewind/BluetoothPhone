@@ -1,6 +1,7 @@
 package com.anyonavinfo.bluetoothphone.bpclient.adapter;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +63,7 @@ public class LinkedDeviceAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final DeviceBean deviceBean = deviceList.get(position);
         ViewHolder holder;
         if (convertView == null) {
@@ -80,8 +81,10 @@ public class LinkedDeviceAdapter extends BaseAdapter {
             holder.device_status.setText("未连接");
         } else if (deviceBean.getDeviceState() == 1) {
             holder.device_status.setText("已连接");
-        } else {
+        } else if (deviceBean.getDeviceState() == 2) {
             holder.device_status.setText("连接中");
+        } else if (deviceBean.getDeviceState() == 3) {
+            holder.device_status.setText("断开中");
         }
         holder.pic_phone.setImageResource(R.drawable.phone);
         holder.delete.setBackgroundResource(R.drawable.delete);
@@ -120,34 +123,55 @@ public class LinkedDeviceAdapter extends BaseAdapter {
         });
         holder.device_name.setText(deviceBean.getDeviceName());
         convertView.setOnClickListener(new View.OnClickListener() {
-            int time = 0;
+
 
             @Override
             public void onClick(View view) {
+                Message msg = new Message();
+                msg.arg2 = position;
                 if (deviceBean.getDeviceState() == 0) {
+                    msg.what = 0x3003;
+                    //连接
                     for (DeviceBean bean : deviceList) {
-                        if (bean.getDeviceState() == 2)
-                            return;
+                        if (bean.getDeviceState() == 2 || bean.getDeviceState() == 3)
+                            return;//若已有设备正在连接则忽略
                     }
                     if (CommonData.hfpStatu >= 2) {
-                        ((MainActivity) mContext).phoneService.disconnect();
-                        time = 6000;
+
+                        msg.arg1 = 2;//断开再连
+                        ((MainActivity) mContext).sendMessage(msg);
+                        ((MainActivity) mContext).postDelayedRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((MainActivity) mContext).phoneService.disconnect();
+                            }
+                        }, 1000);
                     } else {
-                        time = 0;
+                        msg.arg1 = 1;//直接连接
+                        ((MainActivity) mContext).sendMessage(msg);
                     }
+
+//                    ((MainActivity) mContext).postDelayedRunnable(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            ((MainActivity) mContext).phoneService.connect(deviceBean.getDeviceAddr());
+//                            deviceBean.setDeviceState(2);
+//                            setData(deviceList);
+//                            LinkedDeviceAdapter.this.notifyDataSetChanged();
+//                        }
+//                    }, time);
+
+
+                } else if (deviceBean.getDeviceState() == 1) {
+
+                    msg.what = 0x3004;
+                    ((MainActivity) mContext).sendMessage(msg);
                     ((MainActivity) mContext).postDelayedRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e("1111", "run: is connecting");
-                            ((MainActivity) mContext).phoneService.connect(deviceBean.getDeviceAddr());
-                            deviceBean.setDeviceState(2);
-                            setData(deviceList);
-                            LinkedDeviceAdapter.this.notifyDataSetChanged();
+                            ((MainActivity) mContext).phoneService.disconnect();
                         }
-                    }, time);
-                    ;
-                } else if (deviceBean.getDeviceState() == 1) {
-                    ((MainActivity) mContext).phoneService.disconnect();
+                    }, 1000);
                 }
             }
         });

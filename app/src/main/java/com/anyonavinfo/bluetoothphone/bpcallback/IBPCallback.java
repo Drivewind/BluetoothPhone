@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 
 public interface IBPCallback {
+    void onInitOk();//模块初始化OK
     void onHfpDisconnected();//hfu连接断开
     void onHfpConnected();//hfp已连接
     void onIncoming(PhoneBook book);//来电中
