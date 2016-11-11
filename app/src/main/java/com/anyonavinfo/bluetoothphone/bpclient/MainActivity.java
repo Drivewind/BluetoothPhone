@@ -506,6 +506,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 recordFragment.updatePhoneCallView(phoneService.getPhoneCallList(0));
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
                 connectCount = 0;
+                lastAddr = CommonData.curDeviceAddr;
             } else {
                 if (connectCount < 16)
                     postDelayedRunnable(connectRunnable, 300);
@@ -521,6 +522,23 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             linkmanFragment.updatePhoneBookView(null);
         }
     };
+    private int initCount;//第4s开始检查，20ms1次，第7s结束
+    private Runnable initOkRunnable = new Runnable() {
+        @Override
+        public void run() {
+            initCount++;
+            if(isInitOk){
+                initCount=0;
+            }else{
+                if(initCount>150){
+                    initCount=0;
+                    postDelayedRunnable(disConnectRunnable, 500);
+                }else {
+                    postDelayedRunnable(initOkRunnable,20);
+                }
+            }
+        }
+    };
 
     //断开重连用,根据返回值来赋值，临时对策message:2→0→0→initok→0→final statu
     private boolean isInitOk;
@@ -528,6 +546,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private int tempHfpStatu = -1;
     private int curPosition = -1;
     private int connectAction;//1断开连接 2断开重连 3直接连接，之前未有连接
+    private String lastAddr=CommonData.curDeviceAddr;//存储上次保存的连接设备地址
 
     private void handlerMessage(Message msg) {
         switch (msg.what) {
@@ -574,6 +593,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (tempHfpStatu == 2 && msg.arg1 == 0) {
                     //开始断开连接
                     isDisConnectOk = true;
+                    setFragment.updateDeviceState(lastAddr, 3);
+                    postDelayedRunnable(initOkRunnable,4000);
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -583,24 +604,24 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 } else if (tempHfpStatu == 0 && msg.arg1 == 0) {
 
                     if (isDisConnectOk && !isInitOk) {
-                        //断开成功
+                        //断开成功,正在进行初始化
                         if (connectAction == 2 || connectAction == 3) {
                             //更新状态为连接中
-                            setFragment.updateDeviceState(curPosition, 2);
+//                            setFragment.updateDeviceState(curPosition, 2);
                         } else {
                             //更新状态为未连接
-                            setFragment.updateDeviceState(curPosition, 0);
+//                            setFragment.updateDeviceState(curPosition, 0);
                         }
 
                     } else if (!isDisConnectOk && isInitOk) {
                         //初始化成功，回归正常连接状态
                         if (connectAction == 2 || connectAction == 3) {
                             //连接指定设备
+                            setFragment.updateDeviceState(curPosition, 2);
                             phoneService.connect(setFragment.deviceList.get(curPosition).getDeviceAddr());
-                        } else if (connectAction == 1) {
-                            //不做任何事情
-                        }
-                        connectAction = -1;
+                        } else{
+                            postDelayedRunnable(disConnectRunnable, 500);
+                        }                        connectAction = -1;
                     } else if (!isDisConnectOk && !isInitOk) {
                         //重新连接失败
                         postDelayedRunnable(disConnectRunnable, 500);
@@ -610,7 +631,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     postDelayedRunnable(disConnectRunnable, 500);
                 } else if (tempHfpStatu < 2 && msg.arg1 >= 2) {
                     //连接成功
-                    postDelayedRunnable(connectRunnable, 300);
+//                    postDelayedRunnable(connectRunnable, 300);
                     connectAction = -1;
                 }
                 tempHfpStatu = msg.arg1;
@@ -730,8 +751,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 } else if (msg.arg1 == 2) {
                     connectAction = 2;
                     if (CommonData.curDeviceAddr != null) {
-                        setFragment.updateDeviceData();
-                        setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);
+//                        setFragment.updateDeviceData();
+//                        setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);
                     }
                 }
                 break;
@@ -739,7 +760,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 //断开连接
                 curPosition = msg.arg2;
                 connectAction = 1;
-                setFragment.updateDeviceState(curPosition, 3);
+//                setFragment.updateDeviceState(curPosition, 3);
                 break;
 
             default:
