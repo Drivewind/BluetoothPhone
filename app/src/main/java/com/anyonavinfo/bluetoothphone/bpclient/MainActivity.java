@@ -523,10 +523,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     };
 
     //断开重连用,根据返回值来赋值，临时对策message:2→0→0→initok→0→final statu
-private boolean isInitOk;
+    private boolean isInitOk;
     private boolean isDisConnectOk;
-    private int tempHfpStatu=-1;
-    private int curPosition=-1;
+    private int tempHfpStatu = -1;
+    private int curPosition = -1;
     private int connectAction;//1断开连接 2断开重连 3直接连接，之前未有连接
 
     private void handlerMessage(Message msg) {
@@ -538,13 +538,17 @@ private boolean isInitOk;
                     public void run() {
                         isInitOk = false;
                     }
-                },20);
+                }, 20);
                 break;
             case CommonData.HFP_CONNECTED:
                 enableClick4Icon(true);
                 setFragment.aSwitch.setChecked(true);
                 break;
             case CommonData.HFP_DISCONNECTED:
+                if (!curFragment.equals(setFragment)) {
+                    toFragment(FRAGMENT_SET);
+                    rbtnMeduSetting.setChecked(true);
+                }
                 enableClick4Icon(false);
                 break;
             case CommonData.HFP_CONNECTING:
@@ -567,7 +571,7 @@ private boolean isInitOk;
 //                if (msg.arg1 >= 2) {
 //                    postDelayedRunnable(connectRunnable, 300);
 //                }
-                if(tempHfpStatu==2&&msg.arg1==0){
+                if (tempHfpStatu == 2 && msg.arg1 == 0) {
                     //开始断开连接
                     isDisConnectOk = true;
                     mHandler.postDelayed(new Runnable() {
@@ -575,41 +579,41 @@ private boolean isInitOk;
                         public void run() {
                             isDisConnectOk = false;
                         }
-                    },100);//每个手机间隔不一样
-                }else if(tempHfpStatu==0&&msg.arg1==0){
+                    }, 100);//每个手机间隔不一样
+                } else if (tempHfpStatu == 0 && msg.arg1 == 0) {
 
-                    if(isDisConnectOk&&!isInitOk){
+                    if (isDisConnectOk && !isInitOk) {
                         //断开成功
-                        if(connectAction==2||connectAction==3){
+                        if (connectAction == 2 || connectAction == 3) {
                             //更新状态为连接中
-                                setFragment.updateDeviceState(curPosition,2);
-                        }else {
+                            setFragment.updateDeviceState(curPosition, 2);
+                        } else {
                             //更新状态为未连接
-                            setFragment.updateDeviceState(curPosition,0);
+                            setFragment.updateDeviceState(curPosition, 0);
                         }
 
-                    }else if(!isDisConnectOk&&isInitOk){
+                    } else if (!isDisConnectOk && isInitOk) {
                         //初始化成功，回归正常连接状态
-                        if(connectAction==2||connectAction==3){
+                        if (connectAction == 2 || connectAction == 3) {
                             //连接指定设备
                             phoneService.connect(setFragment.deviceList.get(curPosition).getDeviceAddr());
-                        }else if(connectAction==1){
+                        } else if (connectAction == 1) {
                             //不做任何事情
                         }
-                        connectAction=-1;
-                    }else if(!isDisConnectOk&&!isInitOk){
+                        connectAction = -1;
+                    } else if (!isDisConnectOk && !isInitOk) {
                         //重新连接失败
                         postDelayedRunnable(disConnectRunnable, 500);
                     }
-                }else if(tempHfpStatu>2&&msg.arg1==0){
+                } else if (tempHfpStatu > 2 && msg.arg1 == 0) {
                     //正常断开连接
                     postDelayedRunnable(disConnectRunnable, 500);
-                }else if(tempHfpStatu<2&&msg.arg1>=2){
+                } else if (tempHfpStatu < 2 && msg.arg1 >= 2) {
                     //连接成功
                     postDelayedRunnable(connectRunnable, 300);
-                    connectAction=-1;
+                    connectAction = -1;
                 }
-                tempHfpStatu=msg.arg1;
+                tempHfpStatu = msg.arg1;
                 break;
             case CommonData.A2DP_STATU:
                 break;
@@ -718,23 +722,24 @@ private boolean isInitOk;
                 break;
             case 0x3003:
                 //连接
-                curPosition=msg.arg2;
-                if(msg.arg1==1){
-                    connectAction=3;
-                    setFragment.updateDeviceState(curPosition,2);
+                curPosition = msg.arg2;
+                if (msg.arg1 == 1) {
+                    connectAction = 3;
+                    setFragment.updateDeviceState(curPosition, 2);
                     phoneService.connect(setFragment.deviceList.get(curPosition).getDeviceAddr());
-                }else if(msg.arg1==2){
-                    connectAction=2;
-                    if(CommonData.curDeviceAddr!=null){
+                } else if (msg.arg1 == 2) {
+                    connectAction = 2;
+                    if (CommonData.curDeviceAddr != null) {
                         setFragment.updateDeviceData();
-                        setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);}
+                        setFragment.updateDeviceState(CommonData.curDeviceAddr, 3);
+                    }
                 }
                 break;
             case 0x3004:
                 //断开连接
-                curPosition=msg.arg2;
-                connectAction=1;
-                setFragment.updateDeviceState(curPosition,3);
+                curPosition = msg.arg2;
+                connectAction = 1;
+                setFragment.updateDeviceState(curPosition, 3);
                 break;
 
             default:
