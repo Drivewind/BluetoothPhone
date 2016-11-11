@@ -802,7 +802,6 @@ private boolean isInitOk;
      */
     public void enableClick4Icon(Boolean status) {
         Log.e("4 icons status", "false");
-        rbtnMeduSetting.setEnabled(status);
         rbtnMeduDial.setEnabled(status);
         rbtnMeduLinkman.setEnabled(status);
         rbtnMeduRecord.setEnabled(status);
@@ -813,7 +812,6 @@ private boolean isInitOk;
             rbtnMeduLinkman.setButtonDrawable(R.drawable.selector_medu_linkman);
             rbtnMeduRecord.setButtonDrawable(R.drawable.selector_medu_record);
         } else {
-            rbtnMeduSetting.setButtonDrawable(R.drawable.medu_set_unable);
             rbtnMeduDial.setButtonDrawable(R.drawable.medu_dial_unable);
             rbtnMeduLinkman.setButtonDrawable(R.drawable.medu_linkman_unable);
             rbtnMeduRecord.setButtonDrawable(R.drawable.medu_record_unable);
