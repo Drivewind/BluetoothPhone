@@ -75,8 +75,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private boolean isFristOn, isReStart;
     public SweetAlertDialog sweetAlertDialog;
 
-    private int lifeCount =0;//区分本app是否前台运行
-
+    private int lifeCount = 0;//区分本app是否前台运行
 
 
     @Override
@@ -96,8 +95,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handlerNewIntent(intent);
-        Log.e(TAG,"onNewIntent !");
-        lifeCount=101;
+        Log.e(TAG, "onNewIntent !");
+        lifeCount = 101;
     }
 
 
@@ -129,16 +128,17 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e(TAG,"onStart !");
+        Log.e(TAG, "onStart !");
         lifeCount++;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG,"onResume !");
+        Log.e(TAG, "onResume !");
         lifeCount++;
     }
+
     MyConn conn = new MyConn();
 
     @Override
@@ -398,11 +398,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 phoneService.phoneTransfer();
                 break;
             case R.id.ibtn_exit:
-                if (linkmanFragment.btnQuitDelete.getVisibility()==View.VISIBLE){
+                if (linkmanFragment.btnQuitDelete.getVisibility() == View.VISIBLE) {
                     linkmanFragment.quitDelete();
-                }else if(recordFragment.btnQuitDelete.getVisibility()==View.VISIBLE){
+                } else if (recordFragment.btnQuitDelete.getVisibility() == View.VISIBLE) {
                     recordFragment.quitDelete();
-                }else {
+                } else {
                     finish();
                 }
                 break;
@@ -492,7 +492,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
 
-
     /**
      * 物理键退出APP
      */
@@ -543,14 +542,14 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         @Override
         public void run() {
             initCount++;
-            if(isInitOk){
-                initCount=0;
-            }else{
-                if(initCount>150){
-                    initCount=0;
+            if (isInitOk) {
+                initCount = 0;
+            } else {
+                if (initCount > 150) {
+                    initCount = 0;
                     postDelayedRunnable(disConnectRunnable, 500);
-                }else {
-                    postDelayedRunnable(initOkRunnable,20);
+                } else {
+                    postDelayedRunnable(initOkRunnable, 20);
                 }
             }
         }
@@ -562,7 +561,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private int tempHfpStatu = -1;
     private int curPosition = -1;
     private int connectAction;//1断开连接 2断开重连 3直接连接，之前未有连接
-    private String lastAddr=CommonData.curDeviceAddr;//存储上次保存的连接设备地址
+    private String lastAddr = CommonData.curDeviceAddr;//存储上次保存的连接设备地址
 
     private void handlerMessage(Message msg) {
         switch (msg.what) {
@@ -611,7 +610,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     //开始断开连接
                     isDisConnectOk = true;
                     setFragment.updateDeviceState(lastAddr, 3);
-                    postDelayedRunnable(initOkRunnable,4000);
+                    postDelayedRunnable(initOkRunnable, 4000);
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -636,9 +635,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                             //连接指定设备
                             setFragment.updateDeviceState(curPosition, 2);
                             phoneService.connect(setFragment.deviceList.get(curPosition).getDeviceAddr());
-                        } else{
+                        } else {
                             postDelayedRunnable(disConnectRunnable, 500);
-                        }                        connectAction = -1;
+                        }
+                        connectAction = -1;
                     } else if (!isDisConnectOk && !isInitOk) {
                         //重新连接失败
                         postDelayedRunnable(disConnectRunnable, 500);
@@ -664,7 +664,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.PHONE_TALKING:
                 break;
             case CommonData.PHONE_HANGUP:
-                if (preFragment == null || isFristOn||lifeCount==103) {
+                if (preFragment == null || isFristOn || lifeCount == 103) {
                     finish();
                 } else {
                     isFristOn = false;
@@ -683,9 +683,13 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 break;
             case CommonData.VOICE_CONNECTED:
                 call_switch.setChecked(true);
+                call_mute.setButtonDrawable(R.drawable.selector_call_mute);
+                call_mute.setEnabled(true);
                 break;
             case CommonData.VOICE_DISCONNECTED:
                 call_switch.setChecked(false);
+                call_mute.setButtonDrawable(R.drawable.call_mute_unable);
+                call_mute.setEnabled(false);
                 break;
             case CommonData.CURRENT_DEVICE_NAME:
                 break;
