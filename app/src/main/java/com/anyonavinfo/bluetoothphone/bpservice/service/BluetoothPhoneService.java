@@ -99,6 +99,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
             phoneHal.command_getDeviceName();
             phoneHal.command_setVolume(15, 15);
             phoneHal.command_getVolume();
+            phoneHal.command_mute("0");
             ArrayList<PhoneDevice> list = phoneHal.getPairList(1);
             if (list != null && list.get(0) != null && list.get(0).getBdaddr() != null)
                 phoneHal.command_connect(phoneHal.getPairList(1).get(0).getBdaddr());

@@ -64,7 +64,12 @@ public class BluetoothPhoneHal {
     private String isInPair = "0";//0非配对状态,1配对状态
     private String powerStatus = "0";//0关机状态,1开机状态
 
+    private String muteStatu="0";
+    private String tempMute="-1";//若在mic静音装天下，transform会导致unmute Mic后无效，故设此临时变量，transform To Phone前设置mute ,transform To Bluetooth 恢复mute
+
     private String scoStatus="0";
+
+
 
     private PBDownloadThread pbDownloadThread;
 
@@ -399,6 +404,7 @@ public class BluetoothPhoneHal {
            callback.onInitOk();
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("MUTE=")) {
             String mute = receivedMcu.substring(5);
+            muteStatu=mute;
             if (mute.equals("1")) {
                 callback.onMute();
             } else if (mute.equals("0")) {
@@ -420,11 +426,19 @@ public class BluetoothPhoneHal {
             if (scoStatu.equals("0")) {
                 if (hfpStatus.equals("5")) {
                     callback.onVoiceDisconnected();
+                    if(muteStatu.equals("1")){
+                        tempMute="1";
+                    command_mute("0");}
                 }
                 abandonAduioFocus();
             } else if (scoStatu.equals("1")) {
                 if (hfpStatus.equals("5")) {
                     callback.onVoiceConnected();
+                    if(tempMute.equals("1")){
+                        command_mute("1");
+                        tempMute=muteStatu;
+                    }
+
                 }
                 requestAudioFocus();
             }

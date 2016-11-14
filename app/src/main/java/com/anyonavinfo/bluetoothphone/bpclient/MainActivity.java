@@ -78,6 +78,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private int lifeCount =0;//区分本app是否前台运行
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
