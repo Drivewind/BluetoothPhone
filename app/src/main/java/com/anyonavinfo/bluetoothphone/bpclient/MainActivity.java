@@ -581,6 +581,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.HFP_DISCONNECTED:
                 if (!curFragment.equals(setFragment)) {
                     toFragment(FRAGMENT_SET);
+                    showfourIcons();
                     rbtnMeduSetting.setChecked(true);
                 }
                 enableClick4Icon(false);
