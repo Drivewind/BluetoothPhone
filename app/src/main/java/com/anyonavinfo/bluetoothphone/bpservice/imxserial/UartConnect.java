@@ -240,7 +240,7 @@ public class UartConnect {
                         SendData(command);
                         Log.e("BPService", "sent message is "+command  );
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     Log.d(TAG, "SentQueneThread is interrupted !");
