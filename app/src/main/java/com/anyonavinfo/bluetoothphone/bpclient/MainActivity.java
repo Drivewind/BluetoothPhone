@@ -75,6 +75,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private boolean isFristOn, isReStart;
     public SweetAlertDialog sweetAlertDialog;
 
+    private int lifeCount =0;//区分本app是否前台运行
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handlerNewIntent(intent);
+        Log.e(TAG,"onNewIntent !");
+        lifeCount=101;
     }
 
 
@@ -124,8 +128,16 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     @Override
     protected void onStart() {
         super.onStart();
+        Log.e(TAG,"onStart !");
+        lifeCount++;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG,"onResume !");
+        lifeCount++;
+    }
     MyConn conn = new MyConn();
 
     @Override
@@ -478,10 +490,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         LogcatHelper.getInstance(this).stop();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
+
 
     /**
      * 物理键退出APP
@@ -653,7 +662,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case CommonData.PHONE_TALKING:
                 break;
             case CommonData.PHONE_HANGUP:
-                if (preFragment == null || isFristOn) {
+                if (preFragment == null || isFristOn||lifeCount==103) {
                     finish();
                 } else {
                     isFristOn = false;
