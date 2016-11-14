@@ -9,6 +9,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anyonavinfo.bluetoothphone.R;
@@ -19,7 +20,6 @@ import com.anyonavinfo.bluetoothphone.bpservice.utils.TimeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 
 public class RecordAdapter extends BaseAdapter {
@@ -91,6 +91,7 @@ public class RecordAdapter extends BaseAdapter {
             viewHolder.tvTime = (TextView) view.findViewById(R.id.record_time);
             viewHolder.tvAddress = (TextView) view.findViewById(R.id.record_address);
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.record_checked);
+            viewHolder.ivType = (ImageView) view.findViewById(R.id.record_type);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -132,7 +133,23 @@ public class RecordAdapter extends BaseAdapter {
         if (phoneCall!=null){
             viewHolder.tvTime.setText(TimeUtils.getRecentTime(phoneCall.getCallTime()));
         }
-        viewHolder.tvAddress.setText(phoneCall.getCallPlace());
+        if(phoneCall.getCallPlace()!=null){
+            viewHolder.tvAddress.setText(phoneCall.getCallPlace());
+        }else {
+            viewHolder.tvAddress.setText("归属地未知");
+        }
+
+        //1 拨打未通,2 拨打成功,3 未接、拒接 4 接听成功
+        if(phoneCall.getCallType()==1){
+            viewHolder.ivType.setImageResource(R.drawable.huchushibai);
+        }else if(phoneCall.getCallType()==2){
+            viewHolder.ivType.setImageResource(R.drawable.huchu);
+        }else if(phoneCall.getCallType()==3){
+            viewHolder.ivType.setImageResource(R.drawable.weijie);
+        }else if(phoneCall.getCallType()==4){
+            viewHolder.ivType.setImageResource(R.drawable.huru);
+        }
+
         viewHolder.checkBox.setFocusable(false);
         return view;
     }
@@ -143,5 +160,6 @@ public class RecordAdapter extends BaseAdapter {
         TextView tvTime;
         TextView tvAddress;
         CheckBox checkBox;
+        ImageView ivType;
     }
 }

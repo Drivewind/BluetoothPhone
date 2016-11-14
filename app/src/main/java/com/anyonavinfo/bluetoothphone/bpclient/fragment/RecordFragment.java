@@ -34,7 +34,7 @@ public class RecordFragment extends BaseFragment {
     private ImageView ivRecordDivide;
     private ListView lvRecordInfos;
     public Button btnRecordDelete;
-    private Button btnQuitDelete;
+    public Button btnQuitDelete;
 
     private RecordAdapter adapter;
 
@@ -100,13 +100,7 @@ public class RecordFragment extends BaseFragment {
         btnQuitDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = adapter.getData().size() - 1; i >= 0; i--) {
-                    adapter.getData().get(i).setChecked(false);
-                }
-                btnRecordDelete.setText("删除（" + 0 + "）");
-                cbRecordAll.setChecked(false);
-                adapter.setCBVisibility(false);
-                managerView(false);
+                quitDelete();
             }
         });
 
@@ -191,5 +185,15 @@ public class RecordFragment extends BaseFragment {
     public void showIcon() {
         ((MainActivity) getActivity()).showfourIcons();
         ((RadioButton)(((MainActivity) getActivity()).rightMenu.getChildAt(3))).setChecked(true);
+    }
+
+    public void quitDelete() {
+        for (int i = adapter.getData().size() - 1; i >= 0; i--) {
+            adapter.getData().get(i).setChecked(false);
+        }
+        btnRecordDelete.setText("删除（" + 0 + "）");
+        cbRecordAll.setChecked(false);
+        adapter.setCBVisibility(false);
+        managerView(false);
     }
 }

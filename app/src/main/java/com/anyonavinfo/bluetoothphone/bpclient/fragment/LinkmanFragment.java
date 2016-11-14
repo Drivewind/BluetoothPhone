@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class LinkmanFragment extends BaseFragment {
     private PinyinComparator pinyinComparator;
     private SortAdapter adapter;
     private OnUiReady uiReadyListener;
-    private Button btnQuitDelete;
+    public Button btnQuitDelete;
     private List<MyPhoneBook> mMyPhoneBooks;
 
 
@@ -157,18 +156,11 @@ public class LinkmanFragment extends BaseFragment {
         btnQuitDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < adapter.getData().size(); i++) {
-                    adapter.getData().get(i).setChecked(false);
-                }
-                btnDeleteLinkman.setText("删除（" + 0 + "）");
-                linkmanCbAll.setChecked(false);
-                adapter.setCBVisibility(false);
-                managerView(false);
+               quitDelete();
             }
         });
 
     }
-
 
     private void setViews() {
         characterParser = CharacterParser.getInstance();
@@ -189,6 +181,7 @@ public class LinkmanFragment extends BaseFragment {
         testListview.setAdapter(adapter);
         linkmanSidrbar.setTextView(dialog);
     }
+
 
     public void updatePhoneBookView(ArrayList<PhoneBook> callList) {
         mMyPhoneBooks = wrapPhoneBookList(callList);
@@ -281,9 +274,9 @@ public class LinkmanFragment extends BaseFragment {
     }
 
     public interface OnUiReady {
+
         void uiIsReady();
     }
-
     public void setOnUiReadyListener(OnUiReady uiReady) {
         this.uiReadyListener = uiReady;
     }
@@ -300,4 +293,14 @@ public class LinkmanFragment extends BaseFragment {
         ((RadioButton) (((MainActivity) getActivity()).rightMenu.getChildAt(2))).setChecked(true);
     }
 
+
+    public void quitDelete() {
+        for (int i = 0; i < adapter.getData().size(); i++) {
+            adapter.getData().get(i).setChecked(false);
+        }
+        btnDeleteLinkman.setText("删除（" + 0 + "）");
+        linkmanCbAll.setChecked(false);
+        adapter.setCBVisibility(false);
+        managerView(false);
+    }
 }
