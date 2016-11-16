@@ -807,7 +807,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public void onShow() {
         sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        sweetAlertDialog.setTitleText("Loading");
+        sweetAlertDialog.setTitleText("同步中...");
         sweetAlertDialog.setCancelable(false);
         sweetAlertDialog.show();
     }
