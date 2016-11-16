@@ -144,6 +144,7 @@ public class IBPCallbackImpl implements IBPCallback {
         if(CommonData.talkingContact==null){
             CommonData.talkingContact = book;
         }
+
         if(!TextUtils.isEmpty(book.getPbplace())&&TextUtils.isEmpty(CommonData.talkingContact.getPbplace())){
             CommonData.talkingContact.setPbplace(book.getPbplace());
         }
