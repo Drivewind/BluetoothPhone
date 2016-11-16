@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,6 +31,8 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by navinfo-21 on 2016/9/8.
@@ -84,7 +87,7 @@ public class LinkmanFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //当输入框里面的值为空，更新为原来的列表，否则为过滤数据列表
-                if(adapter.getData()!=null && mMyPhoneBooks!=null){
+                if (adapter.getData() != null && mMyPhoneBooks != null) {
                     filterData(s.toString());
                 }
             }
@@ -147,6 +150,11 @@ public class LinkmanFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /** 在非编辑情况下拨打电话*/
                 if (btnEditLinkman.getVisibility() == View.VISIBLE) {
+                    InputMethodManager mInputMethodManager = (InputMethodManager) getActivity().
+                            getSystemService(INPUT_METHOD_SERVICE);
+                    mInputMethodManager.hideSoftInputFromWindow(getActivity().
+                            getCurrentFocus().getWindowToken(), 0);
+
                     String number = adapter.getData().get(position).getPbnumber();//获取号码待用
                     ((MainActivity) getActivity()).phoneService.phoneDail(number);
                 }
@@ -156,7 +164,7 @@ public class LinkmanFragment extends BaseFragment {
         btnQuitDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               quitDelete();
+                quitDelete();
             }
         });
 
@@ -277,6 +285,7 @@ public class LinkmanFragment extends BaseFragment {
 
         void uiIsReady();
     }
+
     public void setOnUiReadyListener(OnUiReady uiReady) {
         this.uiReadyListener = uiReady;
     }
