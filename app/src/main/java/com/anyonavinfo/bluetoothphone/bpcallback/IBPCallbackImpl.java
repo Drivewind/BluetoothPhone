@@ -141,8 +141,9 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onCallSuccessed(PhoneBook book) {
         Log("You had call " + book.getPbname() +" successfully !");
-        CommonData.talkingContact.setPbname(book.getPbname());
-        CommonData.talkingContact.setPbnumber(book.getPbnumber());
+        if(CommonData.talkingContact==null){
+            CommonData.talkingContact = book;
+        }
         if(!TextUtils.isEmpty(book.getPbplace())&&TextUtils.isEmpty(CommonData.talkingContact.getPbplace())){
             CommonData.talkingContact.setPbplace(book.getPbplace());
         }
