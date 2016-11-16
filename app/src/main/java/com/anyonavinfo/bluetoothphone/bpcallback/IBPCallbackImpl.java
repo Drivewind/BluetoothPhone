@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.anyonavinfo.bluetoothphone.bpclient.utils.PadUtil;
@@ -140,6 +141,11 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onCallSuccessed(PhoneBook book) {
         Log("You had call " + book.getPbname() +" successfully !");
+        CommonData.talkingContact.setPbname(book.getPbname());
+        CommonData.talkingContact.setPbnumber(book.getPbnumber());
+        if(!TextUtils.isEmpty(book.getPbplace())&&TextUtils.isEmpty(CommonData.talkingContact.getPbplace())){
+            CommonData.talkingContact.setPbplace(book.getPbplace());
+        }
         CommonData.talkingTime = 0;
         talkingThread = new TalkingThread();
         talkingThread.start();
