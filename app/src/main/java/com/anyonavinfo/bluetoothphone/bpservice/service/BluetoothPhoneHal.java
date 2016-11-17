@@ -725,7 +725,7 @@ public class BluetoothPhoneHal {
         public void run() {
             if (mDiaingPhoneNum != null && mCurDevAddr != null) {
                 callback.onCallSuccessed(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
-                getPhoneOperatorFromNet(mDiaingPhoneNum);
+                getPhoneOperatorFromDB(mDiaingPhoneNum);
                 callCount = 0;
             } else {
                 if (callCount <= 60) {
