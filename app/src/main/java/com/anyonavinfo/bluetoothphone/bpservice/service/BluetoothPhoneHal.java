@@ -724,7 +724,7 @@ public class BluetoothPhoneHal {
                 callCount = 0;
             } else {
                 if (callCount <= 60) {
-                    mHandler.postDelayed(dialSuccessRunnable, 50);
+                    mHandler.postDelayed(talkingRunnable, 50);
                     callCount++;
                 } else {
                     callCount = 0;
@@ -806,10 +806,7 @@ public class BluetoothPhoneHal {
     private String getPhoneOperator(String number) {
         String operator = phoneCallDao.queryPhonePlaceFromPC(mCurDevAddr, number);
         if (TextUtils.isEmpty(operator)) {
-            operator = phoneCallDao.queryPhonePlaceFromPC(mCurDevAddr, number);
-            if (TextUtils.isEmpty(operator)) {
-                getPhoneOperatorFromNet(number);
-            }
+            getPhoneOperatorFromNet(number);
         }
         return operator;
     }

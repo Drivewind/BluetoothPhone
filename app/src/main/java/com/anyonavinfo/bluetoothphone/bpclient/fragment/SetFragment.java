@@ -70,6 +70,7 @@ public class SetFragment extends BaseFragment implements View.OnClickListener {
                 } else {
                     devlist.setVisibility(View.GONE);
                     ((MainActivity) getActivity()).phoneService.disconnect();
+                    updateDeviceState(null,0);
                 }
             }
 
