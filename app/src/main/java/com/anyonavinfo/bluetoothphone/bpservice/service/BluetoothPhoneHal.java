@@ -547,7 +547,7 @@ public class BluetoothPhoneHal {
                     } else if (hfpStatus.equals("3")) {
                         postRunnable(dialSuccessRunnable);
                     } else if (hfpStatus.equals("2")) {
-                        postRunnable(dialSuccessRunnable);
+                        postRunnable(talkingRunnable);
                     }
                     if(scoStatus.equals("0")){
                         callback.onVoiceDisconnected();
@@ -708,6 +708,24 @@ public class BluetoothPhoneHal {
         public void run() {
             if (mDiaingPhoneNum != null && mCurDevAddr != null) {
                 callback.onCallSuccessed(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
+                callCount = 0;
+            } else {
+                if (callCount <= 60) {
+                    mHandler.postDelayed(dialSuccessRunnable, 50);
+                    callCount++;
+                } else {
+                    callCount = 0;
+                }
+            }
+        }
+    };
+
+    private Runnable talkingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mDiaingPhoneNum != null && mCurDevAddr != null) {
+                callback.onCallSuccessed(phoneBookDao.queryPhoneBook(mCurDevAddr, mDiaingPhoneNum));
+                getPhoneOperatorFromNet(mDiaingPhoneNum);
                 callCount = 0;
             } else {
                 if (callCount <= 60) {
