@@ -12,6 +12,7 @@ import com.anyonavinfo.bluetoothphone.bpclient.utils.PadUtil;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneBook;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.imxserial.SerialPort;
+import com.anyonavinfo.bluetoothphone.bpservice.utils.ReflectUtil;
 //import com.byter.hardware.volchannel.Volchannel;
 
 /**
@@ -64,7 +65,7 @@ public class IBPCallbackImpl implements IBPCallback {
     public void onInitOk() {
         Log("Bluetooth Model is initOk !");
         Message msg = new Message();
-        msg.what=CommonData.BLUETOOTH_INITOK;
+        msg.what = CommonData.BLUETOOTH_INITOK;
         sendMessage(msg);
     }
 
@@ -140,11 +141,11 @@ public class IBPCallbackImpl implements IBPCallback {
 
     @Override
     public void onCallSuccessed(PhoneBook book) {
-        Log("You had call " + book.getPbname() +"  "+book.getPbplace()+" successfully !");
-        if(CommonData.talkingContact==null){
+        Log("You had call " + book.getPbname() + "  " + book.getPbplace() + " successfully !");
+        if (CommonData.talkingContact == null) {
             CommonData.talkingContact = book;
         }
-        if(TextUtils.isEmpty(CommonData.talkingContact.getPbplace())&&!TextUtils.isEmpty(book.getPbplace())){
+        if (TextUtils.isEmpty(CommonData.talkingContact.getPbplace()) && !TextUtils.isEmpty(book.getPbplace())) {
             CommonData.talkingContact.setPbplace(book.getPbplace());
         }
         CommonData.talkingTime = 0;
@@ -211,6 +212,11 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onHfpStatus(int status) {
         Log("Hfp status is " + status);
+        if (status > 2) {
+                ReflectUtil.setRecentTaskAvaliable("false");
+        } else {
+                ReflectUtil.setRecentTaskAvaliable("true");
+        }
         CommonData.hfpStatu = status;
         Message msg = new Message();
         msg.what = CommonData.HFP_STATU;
@@ -385,7 +391,7 @@ public class IBPCallbackImpl implements IBPCallback {
 
     @Override
     public void onPhoneOperatorSuccessed(String operator) {
-        Log("Phone operator is get for network successfully ! operator is :"+operator);
+        Log("Phone operator is get for network successfully ! operator is :" + operator);
         if (CommonData.talkingContact != null) {
             CommonData.talkingContact.setPbplace(operator);
         }
