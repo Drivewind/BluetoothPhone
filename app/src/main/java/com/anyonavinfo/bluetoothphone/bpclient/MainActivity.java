@@ -506,6 +506,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
             return true;
         }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -886,5 +887,5 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         }
     }
 
-
+    
 }
