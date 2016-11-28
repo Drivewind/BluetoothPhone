@@ -88,7 +88,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.linkman_name);
             viewHolder.tvPhoneNumb = (TextView) view.findViewById(R.id.linkman_number);
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.linkman_checked);
-            viewHolder.ivType = (ImageView) view.findViewById(R.id.linkman_type);
+           /* viewHolder.ivType = (ImageView) view.findViewById(R.id.linkman_type);*/
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -130,11 +130,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
         viewHolder.checkBox.setFocusable(false);
 
         //1开头的号码当成手机，其它座机
-        if (list.get(position).getPbnumber().startsWith("1")){
+        /*if (list.get(position).getPbnumber().startsWith("1")){
             viewHolder.ivType.setImageResource(R.drawable.mobile);
         }else {
             viewHolder.ivType.setImageResource(R.drawable.telephone);
-        }
+        }*/
         return view;
     }
 
@@ -142,7 +142,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
         TextView tvTitle;
         TextView tvPhoneNumb;
         CheckBox checkBox;
-        ImageView ivType;
+        /*ImageView ivType;*/
     }
 
 
