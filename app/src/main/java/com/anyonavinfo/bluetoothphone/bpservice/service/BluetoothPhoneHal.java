@@ -444,6 +444,9 @@ public class BluetoothPhoneHal {
                     }
                 }
                 phoneAbandonAudioFocus();
+                if(a2dpStatus.equals("3")){
+                    musicRequestAudioFocus();
+                }
             } else if (scoStatu.equals("1")) {
                 if (hfpStatus.equals("5")) {
                     callback.onVoiceConnected();

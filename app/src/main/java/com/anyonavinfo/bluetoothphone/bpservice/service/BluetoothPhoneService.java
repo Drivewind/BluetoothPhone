@@ -60,7 +60,6 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
         });
         startThread = new StartThread();
         startThread.start();
-
     }
 
     @Override
