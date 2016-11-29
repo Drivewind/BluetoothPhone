@@ -699,7 +699,7 @@ public class BluetoothPhoneHal {
     }
 
     private void musicGainAudioFocus() {
-        if(!a2dpStatus.equals("3"))
+        if(a2dpStatus.equals("2"))
         command_MusicPlay_Play();
     }
 
