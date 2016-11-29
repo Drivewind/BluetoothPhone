@@ -86,6 +86,8 @@ public class BluetoothPhoneHal {
     private Context mContext;
     private Handler mHandler = new Handler();
 
+    private boolean musicPlay = false;
+
     public BluetoothPhoneHal(Context context) {
 
         phoneCallDao = PhoneCallDao.getInstance(context);
@@ -199,17 +201,19 @@ public class BluetoothPhoneHal {
     }
 
     /**
-     * 音乐暂停/播放
+     * 音乐播放
      */
     public void command_MusicPlay_Play() {
         outputMcuCommand("PL");
+        musicPlay = true;
     }
 
     /**
-     * 音乐暂停/播放
+     * 音乐暂停
      */
     public void command_MusicPlay_Pause() {
         outputMcuCommand("PA");
+        musicPlay=false;
     }
 
     /**
@@ -648,6 +652,7 @@ public class BluetoothPhoneHal {
                     case AUDIOFOCUS_LOSS:
                     case AUDIOFOCUS_LOSS_TRANSIENT:
                     case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        Log.e(TAG, "onPhoneAudioFocusChange: lose audio focus !");
                         phoneAbandonAudioFocus();
                         phoneRequestAudioFocus();
                         break;
@@ -664,11 +669,13 @@ public class BluetoothPhoneHal {
                     case AUDIOFOCUS_LOSS:
                     case AUDIOFOCUS_LOSS_TRANSIENT:
                     case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        Log.e(TAG, "onMusicAudioFocusChange: lose audio focus !");
                         musicLoseAudioFocus();
                         break;
                     case AUDIOFOCUS_GAIN:
                     case AUDIOFOCUS_GAIN_TRANSIENT:
                     case AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+                        Log.e(TAG, "onMusicAudioFocusChange: gain audio focus !");
                         musicGainAudioFocus();
                         break;
 
@@ -678,6 +685,7 @@ public class BluetoothPhoneHal {
     }
 
     private void phoneRequestAudioFocus() {
+        Log.e(TAG, "request phone audio focus !");
         for (int i = 0; i < streamTypes.length; i++) {
             audioManager.requestAudioFocus(phoneAudioFocusChangeListener, streamTypes[i], AUDIOFOCUS_GAIN);
         }
@@ -685,21 +693,24 @@ public class BluetoothPhoneHal {
     }
 
     private void phoneAbandonAudioFocus() {
+        Log.e(TAG, "abadon phone audio focus !");
         audioManager.abandonAudioFocus(phoneAudioFocusChangeListener);
         SerialPort.setVolumeChannelState(0);
     }
 
     private void musicAbandonAudioFocus() {
+        Log.e(TAG, "abadon music audio focus !");
         SerialPort.setVolumeChannelState(0);
     }
 
     private void musicRequestAudioFocus() {
+        Log.e(TAG, "request music audio focus !");
         audioManager.requestAudioFocus(musicAudioFocusChangeListener, STREAM_MUSIC, AUDIOFOCUS_GAIN);
         SerialPort.setVolumeChannelState(1);
     }
 
     private void musicGainAudioFocus() {
-        if(a2dpStatus.equals("2"))
+        if(a2dpStatus.equals("2")&&!musicPlay)
         command_MusicPlay_Play();
     }
 

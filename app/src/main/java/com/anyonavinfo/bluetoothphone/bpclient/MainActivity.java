@@ -146,6 +146,16 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         super.onStop();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(connectRunnable);
+        collectHandler();
+        unbindService(conn);
+        LogcatHelper.getInstance(this).stop();
+        Log.e(TAG, "onDestroy !");
+    }
+
     private void initHandler() {
         mHandler = new Handler() {
             @Override
@@ -482,14 +492,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         toFragment(FRAGMENT_RECORD);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacks(connectRunnable);
-        collectHandler();
-        unbindService(conn);
-        LogcatHelper.getInstance(this).stop();
-    }
+
 
 
     /**

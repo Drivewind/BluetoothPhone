@@ -48,6 +48,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e(TAG,"Service Created !");
         phoneHal = new BluetoothPhoneHal(this);
         phoneHal.setOnMcuOutput(new BluetoothPhoneHal.OnMcuOutput() {
 
@@ -65,6 +66,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG,"Service Destroyed !");
         this.startService(new Intent(this, BluetoothPhoneService.class));
     }
 
