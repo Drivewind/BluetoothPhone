@@ -93,6 +93,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
 
                 }
             });
+            //添加启动重连机制，确实是否已连接上
             phoneHal.command_getWorkState();
             phoneHal.command_getCurDeviceName();
             phoneHal.command_getCurDeviceAddr();

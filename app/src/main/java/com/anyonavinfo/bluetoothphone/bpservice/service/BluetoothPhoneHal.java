@@ -34,6 +34,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import static android.media.AudioManager.AUDIOFOCUS_GAIN;
+import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
+import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
+import static android.media.AudioManager.AUDIOFOCUS_LOSS;
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
 import static android.media.AudioManager.STREAM_ALARM;
 import static android.media.AudioManager.STREAM_MUSIC;
 import static android.media.AudioManager.STREAM_RING;
@@ -73,9 +78,8 @@ public class BluetoothPhoneHal {
     private PBDownloadThread pbDownloadThread;
 
     private AudioManager audioManager;
-    private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener;
-    private int[] streamTypes = {STREAM_ALARM, STREAM_MUSIC, STREAM_RING, STREAM_NOTIFICATION, STREAM_SYSTEM, STREAM_VOICE_CALL};
-
+    private AudioManager.OnAudioFocusChangeListener phoneAudioFocusChangeListener, musicAudioFocusChangeListener;
+    private static int[] streamTypes = {STREAM_ALARM, STREAM_MUSIC, STREAM_RING, STREAM_NOTIFICATION, STREAM_SYSTEM, STREAM_VOICE_CALL};
 
     private OnMcuOutput onMcuOutput;
     private IBPCallback callback;
@@ -89,16 +93,7 @@ public class BluetoothPhoneHal {
         phoneDeviceDao = PhoneDeviceDao.getInstance(context);
         this.mContext = context;
         callback = IBPCallbackImpl.getCallback(context);
-        audioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
-        audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-            @Override
-            public void onAudioFocusChange(int focusState) {
-                if (focusState == AudioManager.AUDIOFOCUS_LOSS) {
-                    abandonAduioFocus();
-                    requestAudioFocus();
-                }
-            }
-        };
+        initAudioFocusChangeListeer(context);
     }
 
 
@@ -201,6 +196,20 @@ public class BluetoothPhoneHal {
      */
     public void command_MusicPlay() {
         outputMcuCommand("PP");
+    }
+
+    /**
+     * 音乐暂停/播放
+     */
+    public void command_MusicPlay_Play() {
+        outputMcuCommand("PL");
+    }
+
+    /**
+     * 音乐暂停/播放
+     */
+    public void command_MusicPlay_Pause() {
+        outputMcuCommand("PA");
     }
 
     /**
@@ -430,7 +439,7 @@ public class BluetoothPhoneHal {
                         command_mute("0");
                     }
                 }
-                abandonAduioFocus();
+                phoneAbandonAudioFocus();
             } else if (scoStatu.equals("1")) {
                 if (hfpStatus.equals("5")) {
                     callback.onVoiceConnected();
@@ -440,7 +449,7 @@ public class BluetoothPhoneHal {
                     }
 
                 }
-                requestAudioFocus();
+                phoneRequestAudioFocus();
             }
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("NAME=")) {
             String deviceName = receivedMcu.substring(6, receivedMcu.length() - 1);
@@ -562,11 +571,9 @@ public class BluetoothPhoneHal {
                 callback.onHangUp();
             }
             if (hfpStatu.equals("3") || hfpStatu.equals("4") || hfpStatu.equals("5")) {
-                requestAudioFocus();
+                phoneRequestAudioFocus();
             } else {
-                if (!a2dpStatus.equals("3")) {
-                    abandonAduioFocus();
-                }
+                phoneAbandonAudioFocus();
             }
             hfpStatus = hfpStatu;
             callback.onHfpStatus(Integer.valueOf(hfpStatus));
@@ -591,11 +598,9 @@ public class BluetoothPhoneHal {
                     break;
             }
             if (a2dpStatu.equals("3")) {
-                requestAudioFocus();
+                musicRequestAudioFocus();
             } else {
-                if (hfpStatus.equals("0") || hfpStatus.equals("1") || hfpStatus.equals("2")) {
-                    abandonAduioFocus();
-                }
+                musicAbandonAudioFocus();
             }
             a2dpStatus = a2dpStatu;
             callback.onA2dpStatus(Integer.valueOf(a2dpStatu));
@@ -633,19 +638,76 @@ public class BluetoothPhoneHal {
         }
     }
 
-    private void requestAudioFocus() {
-        for (int i = 0; i < streamTypes.length; i++) {
-            audioManager.requestAudioFocus(audioFocusChangeListener, streamTypes[i], AUDIOFOCUS_GAIN);
-        }
-        int n = SerialPort.setVolumeChannelState(1);
-        Log.e("serial_port", "onVoiceConnected: state = " + n);
+
+    private void initAudioFocusChangeListeer(Context context) {
+        audioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
+        phoneAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusState) {
+                switch (focusState) {
+                    case AUDIOFOCUS_LOSS:
+                    case AUDIOFOCUS_LOSS_TRANSIENT:
+                    case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        phoneAbandonAudioFocus();
+                        phoneRequestAudioFocus();
+                        break;
+                    case AUDIOFOCUS_GAIN:
+                        break;
+
+                }
+            }
+        };
+        musicAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusState) {
+                switch (focusState) {
+                    case AUDIOFOCUS_LOSS:
+                    case AUDIOFOCUS_LOSS_TRANSIENT:
+                    case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        musicLoseAudioFocus();
+                        break;
+                    case AUDIOFOCUS_GAIN:
+                    case AUDIOFOCUS_GAIN_TRANSIENT:
+                    case AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+                        musicGainAudioFocus();
+                        break;
+
+                }
+            }
+        };
     }
 
-    private void abandonAduioFocus() {
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
-        int n = SerialPort.setVolumeChannelState(0);
-        Log.e("serial_port", "onVoiceDisConnected: state = " + n);
+    private void phoneRequestAudioFocus() {
+        for (int i = 0; i < streamTypes.length; i++) {
+            audioManager.requestAudioFocus(phoneAudioFocusChangeListener, streamTypes[i], AUDIOFOCUS_GAIN);
+        }
+        SerialPort.setVolumeChannelState(1);
     }
+
+    private void phoneAbandonAudioFocus() {
+        audioManager.abandonAudioFocus(phoneAudioFocusChangeListener);
+        SerialPort.setVolumeChannelState(0);
+    }
+
+    private void musicAbandonAudioFocus() {
+        SerialPort.setVolumeChannelState(0);
+    }
+
+    private void musicRequestAudioFocus() {
+        audioManager.requestAudioFocus(musicAudioFocusChangeListener, STREAM_MUSIC, AUDIOFOCUS_GAIN);
+        SerialPort.setVolumeChannelState(1);
+    }
+
+    private void musicGainAudioFocus() {
+        if(!a2dpStatus.equals("3"))
+        command_MusicPlay_Play();
+    }
+
+    private void musicLoseAudioFocus() {
+        if(a2dpStatus.equals("3"))
+        command_MusicPlay_Pause();
+    }
+
 
     private void updateCallLog() {
         if (hfpStatus.equals("4")) {
