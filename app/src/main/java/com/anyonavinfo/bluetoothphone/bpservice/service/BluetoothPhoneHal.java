@@ -82,11 +82,12 @@ public class BluetoothPhoneHal {
     private static int[] streamTypes = {STREAM_ALARM, STREAM_MUSIC, STREAM_RING, STREAM_NOTIFICATION, STREAM_SYSTEM, STREAM_VOICE_CALL};
 
     private OnMcuOutput onMcuOutput;
+    private OnStatusUpdate onStatusUpdate;
     private IBPCallback callback;
     private Context mContext;
     private Handler mHandler = new Handler();
 
-    private boolean musicPlay = false;
+    private int loseFocusFlag = -1;//-1默认状态 1lose 2get，失去焦点后置为1 处于播放状态时重置为-1
 
     public BluetoothPhoneHal(Context context) {
 
@@ -205,7 +206,6 @@ public class BluetoothPhoneHal {
      */
     public void command_MusicPlay_Play() {
         outputMcuCommand("PL");
-        musicPlay = true;
     }
 
     /**
@@ -213,7 +213,6 @@ public class BluetoothPhoneHal {
      */
     public void command_MusicPlay_Pause() {
         outputMcuCommand("PA");
-        musicPlay=false;
     }
 
     /**
@@ -584,7 +583,7 @@ public class BluetoothPhoneHal {
             }
             hfpStatus = hfpStatu;
             callback.onHfpStatus(Integer.valueOf(hfpStatus));
-
+            updateHfpStatu(Integer.valueOf(hfpStatus));
         } else if (receivedMcu.length() >= 5 && receivedMcu.substring(0, 5).equals("A2DP=")) {
             String a2dpStatu = receivedMcu.substring(5);
             switch (a2dpStatu) {
@@ -606,8 +605,12 @@ public class BluetoothPhoneHal {
             }
             if (a2dpStatu.equals("3")) {
                 musicRequestAudioFocus();
+                loseFocusFlag=-1;//重置播放状态
             } else {
                 musicAbandonAudioFocus();
+                if(loseFocusFlag!=1){
+                    loseFocusFlag=-1;//若此前未失去焦点,则重置
+                }
             }
             a2dpStatus = a2dpStatu;
             callback.onA2dpStatus(Integer.valueOf(a2dpStatu));
@@ -674,12 +677,14 @@ public class BluetoothPhoneHal {
                     case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                         Log.e(TAG, "onMusicAudioFocusChange: lose audio focus !");
                         musicLoseAudioFocus();
+                        loseFocusFlag = 1;
                         break;
                     case AUDIOFOCUS_GAIN:
                     case AUDIOFOCUS_GAIN_TRANSIENT:
                     case AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
                         Log.e(TAG, "onMusicAudioFocusChange: gain audio focus !");
                         musicGainAudioFocus();
+                        loseFocusFlag=2;
                         break;
 
                 }
@@ -713,7 +718,7 @@ public class BluetoothPhoneHal {
     }
 
     private void musicGainAudioFocus() {
-        if(a2dpStatus.equals("2")&&!musicPlay)
+        if(a2dpStatus.equals("2")&&loseFocusFlag==1)
         command_MusicPlay_Play();
     }
 
@@ -952,5 +957,17 @@ public class BluetoothPhoneHal {
 
     public void setOnMcuOutput(OnMcuOutput output) {
         this.onMcuOutput = output;
+    }
+
+   public interface OnStatusUpdate{
+       void updateHfpStatu(int hfpStatu);
+   }
+    public void setOnStatusUpdate(OnStatusUpdate onStatusUpdate){
+        this.onStatusUpdate = onStatusUpdate;
+    }
+    private void updateHfpStatu(int hfpStatu){
+        if(this.onStatusUpdate!=null){
+            this.onStatusUpdate.updateHfpStatu(hfpStatu);
+        }
     }
 }

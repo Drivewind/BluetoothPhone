@@ -56,4 +56,6 @@ public class CommonData {
     //通话信息
     public static PhoneBook talkingContact;
     public static int talkingTime;//通话时间
+
+    public static int padConnectionStatu=-1;//0未连接、1已连接
 }

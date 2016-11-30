@@ -1,10 +1,12 @@
 package com.anyonavinfo.bluetoothphone.bpservice.service;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -14,8 +16,10 @@ import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneCall;
 import com.anyonavinfo.bluetoothphone.bpservice.entity.PhoneDevice;
 import com.anyonavinfo.bluetoothphone.bpservice.imxserial.UartConnect;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import com.autopet.hardware.aidl.IHWCallBack;
+import com.autopet.hardware.aidl.IHWSendCmd;
 
 /**
  * Created by Drive on 2016/8/24.
@@ -26,7 +30,10 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     private StartThread startThread;
     private UartConnect uartConnect;
     private BluetoothPhoneHal phoneHal;
+    private TBOXServiceMediator tboxServiceMediator;
 
+
+    private IHWSendCmd E3HWService;
 
     public class MyBinder extends Binder {
         public BluetoothPhoneService getService() {
@@ -48,7 +55,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG,"Service Created !");
+        Log.e(TAG, "Service Created !");
         phoneHal = new BluetoothPhoneHal(this);
         phoneHal.setOnMcuOutput(new BluetoothPhoneHal.OnMcuOutput() {
 
@@ -60,12 +67,15 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
         });
         startThread = new StartThread();
         startThread.start();
+        bindService();
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG,"Service Destroyed !");
+        Log.e(TAG, "Service Destroyed !");
+        endService();
         this.startService(new Intent(this, BluetoothPhoneService.class));
     }
 
@@ -338,5 +348,78 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     public ArrayList<PhoneCall> getPhoneCallList(int type) {
         return phoneHal.getPhoneCall(type);
     }
+
+
+    private void bindService() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.E3HWService");
+        intent.setPackage("com.autopet.hardware.aidl");
+        bindService(intent, connBase, BIND_AUTO_CREATE);
+    }
+
+
+    private void endService() {
+        if (connBase != null) {
+            unbindService(connBase);
+        }
+        try {
+            if (E3HWService != null) {
+                E3HWService.unregisterCallback(ihwcb);
+            }
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        E3HWService = null;
+    }
+
+    private IHWCallBack ihwcb = new IHWCallBack.Stub() {
+
+        @Override
+        public void updateStatus(String NewStatus) {
+            tboxServiceMediator.getJsonStatus(NewStatus);
+        }
+    };
+
+    private ServiceConnection connBase = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            E3HWService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            E3HWService = IHWSendCmd.Stub.asInterface(service);
+            try {
+                E3HWService.registerCallback(ihwcb);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            initTBOXServiceMediator();
+        }
+    };
+
+    private void initTBOXServiceMediator() {
+        tboxServiceMediator = new TBOXServiceMediator();
+        tboxServiceMediator.setOnJsonOutput(new TBOXServiceMediator.OnJsonOutput() {
+            @Override
+            public void outputJson(String json) {
+                if (E3HWService != null) {
+                    try {
+                        E3HWService.sendCommand(json);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        phoneHal.setOnStatusUpdate(new BluetoothPhoneHal.OnStatusUpdate() {
+            @Override
+            public void updateHfpStatu(int hfpStatu) {
+                tboxServiceMediator.excuteCommand(TBOXServiceMediator.UPDATE_HFP_STATUS,hfpStatu);
+            }
+        });
+    }
+
 
 }
