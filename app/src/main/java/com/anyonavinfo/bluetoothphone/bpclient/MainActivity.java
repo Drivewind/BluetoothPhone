@@ -139,6 +139,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         super.onResume();
         Log.e(TAG, "onResume !");
         lifeCount++;
+        if(phoneService!=null){
+            phoneService.getPadConnection();
+        }
     }
 
     MyConn conn = new MyConn();
@@ -203,6 +206,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 phoneService.phoneTransferToBluetooth();
             }
             initHandler();
+            phoneService.getPadConnection();
         }
 
         @Override
@@ -742,9 +746,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
                 break;
             case CommonData.PAD_CONNECTION:
-                Toast.makeText(this, "sssss", Toast.LENGTH_SHORT).show();
-                dialog();
-                Log.e("BPService", "ssssssssssss");
+                    Log.e("BPService","11111111111111");
                 break;
             case CommonData.UPDATE_TALKING_TIME:
                 StringBuilder sb = new StringBuilder();
