@@ -324,7 +324,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         ibtnExit.setOnClickListener(this);
         enableClick4Icon(false);
 
-        dialog();
+        //dialog();
     }
 
     /**
@@ -741,6 +741,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
                 break;
             case CommonData.PAD_CONNECTION:
+
 
                 break;
             case CommonData.UPDATE_TALKING_TIME:
