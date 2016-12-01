@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.anyonavinfo.bluetoothphone.R;
 import com.anyonavinfo.bluetoothphone.bpcallback.CommonData;
 import com.anyonavinfo.bluetoothphone.bpcallback.IBPCallbackImpl;
@@ -741,8 +742,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
                 break;
             case CommonData.PAD_CONNECTION:
-
-
+                Toast.makeText(this, "sssss", Toast.LENGTH_SHORT).show();
+                dialog();
+                Log.e("BPService", "ssssssssssss");
                 break;
             case CommonData.UPDATE_TALKING_TIME:
                 StringBuilder sb = new StringBuilder();

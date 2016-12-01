@@ -213,9 +213,9 @@ public class IBPCallbackImpl implements IBPCallback {
     public void onHfpStatus(int status) {
         Log("Hfp status is " + status);
         if (status > 2) {
-                ReflectUtil.setRecentTaskAvaliable("false");
+            ReflectUtil.setRecentTaskAvaliable("false");
         } else {
-                ReflectUtil.setRecentTaskAvaliable("true");
+            ReflectUtil.setRecentTaskAvaliable("true");
         }
         CommonData.hfpStatu = status;
         Message msg = new Message();
@@ -406,10 +406,10 @@ public class IBPCallbackImpl implements IBPCallback {
     @Override
     public void onPadConnection(int connection) {
         Log("Pad connect statu is :" + connection);
-        CommonData.padConnectionStatu=connection;
+        CommonData.padConnectionStatu = connection;
         Message msg = new Message();
         msg.what = CommonData.PAD_CONNECTION;
-        msg.arg1=connection;
+        msg.arg1 = connection;
         sendMessage(msg);
     }
 
