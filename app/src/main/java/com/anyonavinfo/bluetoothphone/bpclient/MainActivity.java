@@ -1,5 +1,6 @@
 package com.anyonavinfo.bluetoothphone.bpclient;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -16,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -322,6 +324,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
         ibtnExit.setOnClickListener(this);
         enableClick4Icon(false);
+
+        dialog();
     }
 
     /**
@@ -491,8 +495,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);//fragment打开动画
         toFragment(FRAGMENT_RECORD);
     }
-
-
 
 
     /**
@@ -890,5 +892,21 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         }
     }
 
-    
+
+    AlertDialog alertDialog;
+
+    public void dialog() {
+        alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.show();
+        alertDialog.getWindow().setContentView(R.layout.dialog);
+        alertDialog.setCancelable(false);
+        Button btn_sure = (Button) alertDialog.getWindow().findViewById(R.id.btn_sure);
+
+        btn_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
 }
