@@ -122,6 +122,7 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        tboxServiceMediator.excuteCommand(TBOXServiceMediator.GET_PAD_CONNECTION);
         return new MyBinder();
     }
 
@@ -413,6 +414,13 @@ public class BluetoothPhoneService extends Service implements IBPCommand {
                 }
             }
         });
+        tboxServiceMediator.setOnStatusOutput(new TBOXServiceMediator.OnStatusOutput() {
+            @Override
+            public void outputPadConnectionStatu(int statu) {
+                phoneHal.callback.onPadConnection(statu);
+            }
+        });
+        tboxServiceMediator.excuteCommand(TBOXServiceMediator.GET_PAD_CONNECTION);
         phoneHal.setOnStatusUpdate(new BluetoothPhoneHal.OnStatusUpdate() {
             @Override
             public void updateHfpStatu(int hfpStatu) {

@@ -13,8 +13,10 @@ import org.json.JSONStringer;
 public class TBOXServiceMediator {
 
     public static final int UPDATE_HFP_STATUS = 0x1001;
+    public static final int GET_PAD_CONNECTION=0X1002;
 
     private OnJsonOutput onJsonOutput;
+    private OnStatusOutput onStatusOutput;
 
     public void excuteCommand(int... Command) {
         String CtrlString = "", ParaString = "";
@@ -25,6 +27,16 @@ public class TBOXServiceMediator {
                     ParaString = new JSONStringer().object().key("HFPSTATU").value(hfpStatu)
                             .endObject().toString();
                     CtrlString = new JSONStringer().object().key("UPDATEHFPSTATU")
+                            .value(ParaString).endObject().toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                outputJsonCommand(CtrlString);
+                break;
+            case GET_PAD_CONNECTION:
+                try {
+                    ParaString ="";
+                    CtrlString = new JSONStringer().object().key("GETPADCONNECTION")
                             .value(ParaString).endObject().toString();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -44,7 +56,9 @@ public class TBOXServiceMediator {
             if(JsonID.endsWith("ISPADCONNECT")){
                 jsonparas = new JSONObject(jsonobject.getString("ISPADCONNECT"));
                 int isPadConnected = Integer.parseInt(jsonparas.getString("isPadConnect"));
-                CommonData.padConnectionStatu=isPadConnected;
+                if(this.onStatusOutput!=null){
+                    this.onStatusOutput.outputPadConnectionStatu(isPadConnected);
+                }
             }
 
         } catch (JSONException e) {
@@ -65,5 +79,12 @@ public class TBOXServiceMediator {
 
     public interface OnJsonOutput {
         void outputJson(String json);
+    }
+
+    public void setOnStatusOutput(OnStatusOutput onStatusOutput){
+        this.onStatusOutput=onStatusOutput;
+    }
+    public interface OnStatusOutput{
+        void outputPadConnectionStatu(int statu);
     }
 }

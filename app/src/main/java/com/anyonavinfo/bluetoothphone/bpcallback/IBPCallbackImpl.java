@@ -403,6 +403,16 @@ public class IBPCallbackImpl implements IBPCallback {
         sendMessage(msg);
     }
 
+    @Override
+    public void onPadConnection(int connection) {
+        Log("Pad connect statu is :" + connection);
+        CommonData.padConnectionStatu=connection;
+        Message msg = new Message();
+        msg.what = CommonData.PAD_CONNECTION;
+        msg.arg1=connection;
+        sendMessage(msg);
+    }
+
     class TalkingThread extends Thread {
         @Override
         public void run() {

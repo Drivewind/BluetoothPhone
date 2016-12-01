@@ -83,7 +83,7 @@ public class BluetoothPhoneHal {
 
     private OnMcuOutput onMcuOutput;
     private OnStatusUpdate onStatusUpdate;
-    private IBPCallback callback;
+    IBPCallback callback;
     private Context mContext;
     private Handler mHandler = new Handler();
 
@@ -443,7 +443,7 @@ public class BluetoothPhoneHal {
                     }
                 }
                 phoneAbandonAudioFocus();
-                if(a2dpStatus.equals("3")){
+                if (a2dpStatus.equals("3")) {
                     musicRequestAudioFocus();
                 }
             } else if (scoStatu.equals("1")) {
@@ -605,11 +605,15 @@ public class BluetoothPhoneHal {
             }
             if (a2dpStatu.equals("3")) {
                 musicRequestAudioFocus();
-                loseFocusFlag=-1;//重置播放状态
+                loseFocusFlag = -1;//重置播放状态
             } else {
                 musicAbandonAudioFocus();
-                if(loseFocusFlag!=1){
-                    loseFocusFlag=-1;//若此前未失去焦点,则重置
+                if (loseFocusFlag != 1) {
+                    loseFocusFlag = -1;//若此前未失去焦点,则重置
+                    audioManager.abandonAudioFocus(musicAudioFocusChangeListener);//此操作为手动暂停，故永久失去焦点
+                    //暂存问题，失去焦点到获取这步需要大概0.5s时间，若lose gain过快，会导致状态混乱
+                } else {
+                    //焦点被抢，故等待焦点释放
                 }
             }
             a2dpStatus = a2dpStatu;
@@ -677,14 +681,12 @@ public class BluetoothPhoneHal {
                     case AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                         Log.e(TAG, "onMusicAudioFocusChange: lose audio focus !");
                         musicLoseAudioFocus();
-                        loseFocusFlag = 1;
                         break;
                     case AUDIOFOCUS_GAIN:
                     case AUDIOFOCUS_GAIN_TRANSIENT:
                     case AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
                         Log.e(TAG, "onMusicAudioFocusChange: gain audio focus !");
                         musicGainAudioFocus();
-                        loseFocusFlag=2;
                         break;
 
                 }
@@ -718,13 +720,16 @@ public class BluetoothPhoneHal {
     }
 
     private void musicGainAudioFocus() {
-        if(a2dpStatus.equals("2")&&loseFocusFlag==1)
-        command_MusicPlay_Play();
+        musicFocusCount = 0;
+        mHandler.removeCallbacks(musicLoseAudioFocusRunnable);
+        mHandler.post(musicGainAudioFocusRunnable);
     }
 
+
     private void musicLoseAudioFocus() {
-        if(a2dpStatus.equals("3"))
-        command_MusicPlay_Pause();
+        musicFocusCount = 0;
+        mHandler.removeCallbacks(musicGainAudioFocusRunnable);
+        mHandler.post(musicLoseAudioFocusRunnable);
     }
 
 
@@ -866,6 +871,39 @@ public class BluetoothPhoneHal {
             }
         }
     };
+    private int musicFocusCount = 0;
+    private Runnable musicGainAudioFocusRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (a2dpStatus.equals("2") && loseFocusFlag == 1) {
+                command_MusicPlay_Play();
+                loseFocusFlag = 2;
+            } else {
+                if (musicFocusCount <= 25) {
+                    mHandler.postDelayed(musicGainAudioFocusRunnable, 20);
+                    musicFocusCount++;
+                } else {
+                    musicFocusCount = 0;
+                }
+            }
+        }
+    };
+    private Runnable musicLoseAudioFocusRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (a2dpStatus.equals("3")) {
+                command_MusicPlay_Pause();
+                loseFocusFlag = 1;
+            } else {
+                if (musicFocusCount <= 10) {
+                    mHandler.postDelayed(musicLoseAudioFocusRunnable, 25);
+                    musicFocusCount++;
+                } else {
+                    musicFocusCount = 0;
+                }
+            }
+        }
+    };
 
 
     private void dialCallback() {
@@ -959,14 +997,16 @@ public class BluetoothPhoneHal {
         this.onMcuOutput = output;
     }
 
-   public interface OnStatusUpdate{
-       void updateHfpStatu(int hfpStatu);
-   }
-    public void setOnStatusUpdate(OnStatusUpdate onStatusUpdate){
+    public interface OnStatusUpdate {
+        void updateHfpStatu(int hfpStatu);
+    }
+
+    public void setOnStatusUpdate(OnStatusUpdate onStatusUpdate) {
         this.onStatusUpdate = onStatusUpdate;
     }
-    private void updateHfpStatu(int hfpStatu){
-        if(this.onStatusUpdate!=null){
+
+    private void updateHfpStatu(int hfpStatu) {
+        if (this.onStatusUpdate != null) {
             this.onStatusUpdate.updateHfpStatu(hfpStatu);
         }
     }

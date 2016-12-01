@@ -40,6 +40,8 @@ public class CommonData {
     public static final int VOLUME_UNMUTE = 0x1030;
     public static final int PHONEOPERATOR_SUCCESSED = 0x1031;
 
+    public static final int PAD_CONNECTION=0x1032;
+
     public static final int UPDATE_TALKING_TIME = 0X2001;
 
     public static int hfpStatu;

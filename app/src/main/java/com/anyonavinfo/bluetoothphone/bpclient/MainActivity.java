@@ -739,6 +739,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 recordFragment.updatePhoneCallView(phoneService.getPhoneCallList(0));
                 linkmanFragment.updatePhoneBookView(phoneService.getPhoneBookList());
                 break;
+            case CommonData.PAD_CONNECTION:
+
+                break;
             case CommonData.UPDATE_TALKING_TIME:
                 StringBuilder sb = new StringBuilder();
                 int talkingTime = msg.arg1;
